@@ -36,7 +36,7 @@ public class BookServiceImplTest {
     private BookService bookService;
 
     @Test
-    public void testForAddNewItem() {
+    public void testForAddNewBook() {
         Book newBook = new Book();
         newBook.setTitle("Test title");
         newBook.setAuthor_1("Test Author 1");
@@ -59,7 +59,7 @@ public class BookServiceImplTest {
 
 
     @Test
-    public void testForAddNewItemWithoutAnyRequiredAttribute() {
+    public void testForAddNewBookWithoutAnyRequiredAttribute() {
         thrown.expect(PersistenceException.class);
 
         Book newBook = new Book();
