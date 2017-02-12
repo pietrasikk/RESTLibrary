@@ -12,6 +12,8 @@
     <properties>
         <springframework.version>4.3.4.RELEASE</springframework.version>
         <hibernate.library>5.2.6.Final</hibernate.library>
+        <hibernate.validator.version>5.4.0.Final</hibernate.validator.version>
+        <javax.validation.version>1.1.0.Final</javax.validation.version>
         <h2.database.version>1.4.193</h2.database.version>
         <junit>4.12</junit>
         <log4j2>2.8</log4j2>
@@ -87,6 +89,16 @@
         </dependency>
 
         <!-- Other -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>${javax.validation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
