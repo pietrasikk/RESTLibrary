@@ -25,7 +25,6 @@ public class BookRepositoryImpl implements BookRepository {
         return entityManager.find(Book.class, id);
     }
 
-    @Override
     public void removeBook(Book book) {
         Book removedBook = entityManager.find(Book.class, book.getId());
         if (removedBook != null) {
