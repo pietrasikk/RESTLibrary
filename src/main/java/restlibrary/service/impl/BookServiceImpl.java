@@ -7,6 +7,8 @@ import restlibrary.model.Book;
 import restlibrary.repository.BookRepository;
 import restlibrary.service.BookService;
 
+import java.util.List;
+
 @Transactional
 @Service("bookService")
 public class BookServiceImpl implements BookService {
@@ -20,5 +22,13 @@ public class BookServiceImpl implements BookService {
 
     public Book getBookById(Long id) {
         return bookRepository.getBookById(id);
+    }
+
+    public void removeBook(Book book) {
+        bookRepository.removeBook(book);
+    }
+
+    public List<Book> getAllBooks() {
+        return bookRepository.getAllBooks();
     }
 }
