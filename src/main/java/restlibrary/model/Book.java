@@ -5,6 +5,7 @@ import restlibrary.model.enums.BookTypeEnum;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "BOOK")
@@ -27,6 +28,7 @@ public class Book implements Serializable {
     private String isbn;
     private int copies;
     private GenreTypeEnum genreType;
+    private List<RentalRecord> rentalRecords;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -165,6 +167,61 @@ public class Book implements Serializable {
         this.genreType = genreType;
     }
 
+    @OneToMany(mappedBy = "book")
+    public List<RentalRecord> getRentalRecords() {
+        return rentalRecords;
+    }
+
+    public void setRentalRecords(List<RentalRecord> rentalRecords) {
+        this.rentalRecords = rentalRecords;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Book book = (Book) o;
+
+        if (pages != book.pages) return false;
+        if (releaseYear != book.releaseYear) return false;
+        if (copies != book.copies) return false;
+        if (!id.equals(book.id)) return false;
+        if (!title.equals(book.title)) return false;
+        if (!author_1.equals(book.author_1)) return false;
+        if (!author_2.equals(book.author_2)) return false;
+        if (!author_3.equals(book.author_3)) return false;
+        if (!author_4.equals(book.author_4)) return false;
+        if (!author_5.equals(book.author_5)) return false;
+        if (bookType != book.bookType) return false;
+        if (!language.equals(book.language)) return false;
+        if (!publishingHouse.equals(book.publishingHouse)) return false;
+        if (!isbn.equals(book.isbn)) return false;
+        if (genreType != book.genreType) return false;
+        return rentalRecords.equals(book.rentalRecords);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + author_1.hashCode();
+        result = 31 * result + author_2.hashCode();
+        result = 31 * result + author_3.hashCode();
+        result = 31 * result + author_4.hashCode();
+        result = 31 * result + author_5.hashCode();
+        result = 31 * result + bookType.hashCode();
+        result = 31 * result + language.hashCode();
+        result = 31 * result + pages;
+        result = 31 * result + releaseYear;
+        result = 31 * result + publishingHouse.hashCode();
+        result = 31 * result + isbn.hashCode();
+        result = 31 * result + copies;
+        result = 31 * result + genreType.hashCode();
+        result = 31 * result + rentalRecords.hashCode();
+        return result;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -183,6 +240,7 @@ public class Book implements Serializable {
                 ", isbn='" + isbn + '\'' +
                 ", copies=" + copies +
                 ", genreType=" + genreType +
+                ", rentalRecords=" + rentalRecords +
                 '}';
     }
 }
