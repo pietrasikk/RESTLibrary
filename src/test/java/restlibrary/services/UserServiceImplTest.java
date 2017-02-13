@@ -2,7 +2,9 @@ package restlibrary.services;
 
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -15,12 +17,17 @@ import restlibrary.model.User;
 import restlibrary.model.enums.UserRoleEnum;
 import restlibrary.service.UserService;
 
+import javax.persistence.PersistenceException;
+
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @WebAppConfiguration
 @ContextConfiguration(classes = {HibernateConfigurationTest.class})
 public class UserServiceImplTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     private UserService userService;
@@ -36,6 +43,18 @@ public class UserServiceImplTest {
         Assert.assertEquals(userService.getAllUsers().size(), 0);
         userService.addNewUser(newUser);
         Assert.assertEquals(userService.getAllUsers().size(), 1);
+    }
+
+    @Test
+    public void testForAddNewUserWithoutAnyRequiredAttribute() {
+        thrown.expect(PersistenceException.class);
+
+        User newUser = new User();
+        newUser.setSurname("Test_surname");
+        newUser.setLogin("Test_login");
+        newUser.setRole(UserRoleEnum.CUSTOMER);
+
+        userService.addNewUser(newUser);
     }
 
     @Test
