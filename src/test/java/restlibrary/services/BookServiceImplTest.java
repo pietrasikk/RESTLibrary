@@ -49,12 +49,9 @@ public class BookServiceImplTest {
         newBook.setCopies(10);
         newBook.setGenreType(GenreTypeEnum.GUIDEBOOK);
 
-        Book book = bookService.addNewBook(newBook);
-        Book dbBook = bookService.getBookById(book.getId());
-
-        Assert.assertNotNull(dbBook);
-        Assert.assertEquals(dbBook.getGenreType(), newBook.getGenreType());
-        Assert.assertEquals(dbBook.getTitle(), newBook.getTitle());
+        Assert.assertEquals(bookService.getAllBooks().size(), 0);
+        bookService.addNewBook(newBook);
+        Assert.assertEquals(bookService.getAllBooks().size(), 1);
     }
 
 
@@ -73,12 +70,12 @@ public class BookServiceImplTest {
         newBook.setCopies(10);
         newBook.setGenreType(GenreTypeEnum.GUIDEBOOK);
 
-        Book book = bookService.addNewBook(newBook);
+        bookService.addNewBook(newBook);
     }
 
 
     @Test
-    public void testForRemoveBook(){
+    public void testForRemoveBook() {
         Book newBook_1 = new Book();
         newBook_1.setTitle("Test title");
         newBook_1.setAuthor_1("Test Author 1");
@@ -103,18 +100,11 @@ public class BookServiceImplTest {
         newBook_2.setCopies(5);
         newBook_2.setGenreType(GenreTypeEnum.DIARY);
 
-        Book book_1 = bookService.addNewBook(newBook_1);
-        Book book_2 = bookService.addNewBook(newBook_2);
-
-        List<Book> allBooks = bookService.getAllBooks();
-
-        Assert.assertNotEquals(allBooks.size(), 0);
-        Assert.assertEquals(allBooks.size(), 2);
-
-        bookService.removeBook(book_2);
-
-        List<Book> allBooksAfterRemoved = bookService.getAllBooks();
-        Assert.assertNotEquals(allBooksAfterRemoved.size(), 0);
-        Assert.assertEquals(allBooksAfterRemoved.size(), 1);
+        Assert.assertEquals(bookService.getAllBooks().size(), 0);
+        bookService.addNewBook(newBook_1);
+        Book book = bookService.addNewBook(newBook_2);
+        Assert.assertEquals(bookService.getAllBooks().size(), 2);
+        bookService.removeBook(book);
+        Assert.assertEquals(bookService.getAllBooks().size(), 1);
     }
 }
