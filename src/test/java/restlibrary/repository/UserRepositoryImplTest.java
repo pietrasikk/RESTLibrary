@@ -1,4 +1,4 @@
-package restlibrary.services;
+package restlibrary.repository;
 
 
 import org.junit.Assert;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import restlibrary.configuration.HibernateConfigurationTest;
 import restlibrary.model.User;
 import restlibrary.model.enums.UserRoleEnum;
-import restlibrary.service.UserService;
 
 import javax.persistence.PersistenceException;
 
@@ -24,13 +23,13 @@ import javax.persistence.PersistenceException;
 @Transactional
 @WebAppConfiguration
 @ContextConfiguration(classes = {HibernateConfigurationTest.class})
-public class UserServiceImplTest {
+public class UserRepositoryImplTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Test
     public void testForAddNewUser() {
@@ -40,9 +39,9 @@ public class UserServiceImplTest {
         newUser.setLogin("Test_login");
         newUser.setRole(UserRoleEnum.CUSTOMER);
 
-        Assert.assertEquals(userService.getAllUsers().size(), 0);
-        userService.addNewUser(newUser);
-        Assert.assertEquals(userService.getAllUsers().size(), 1);
+        Assert.assertEquals(userRepository.getAllUsers().size(), 0);
+        userRepository.addNewUser(newUser);
+        Assert.assertEquals(userRepository.getAllUsers().size(), 1);
     }
 
     @Test
@@ -54,7 +53,7 @@ public class UserServiceImplTest {
         newUser.setLogin("Test_login");
         newUser.setRole(UserRoleEnum.CUSTOMER);
 
-        userService.addNewUser(newUser);
+        userRepository.addNewUser(newUser);
     }
 
     @Test
@@ -71,11 +70,11 @@ public class UserServiceImplTest {
         newUser_2.setLogin("Test_login_2");
         newUser_2.setRole(UserRoleEnum.WORKER);
 
-        Assert.assertEquals(userService.getAllUsers().size(), 0);
-        userService.addNewUser(newUser_1);
-        User user = userService.addNewUser(newUser_2);
-        Assert.assertEquals(userService.getAllUsers().size(), 2);
-        userService.removeUser(user);
-        Assert.assertEquals(userService.getAllUsers().size(), 1);
+        Assert.assertEquals(userRepository.getAllUsers().size(), 0);
+        userRepository.addNewUser(newUser_1);
+        User user = userRepository.addNewUser(newUser_2);
+        Assert.assertEquals(userRepository.getAllUsers().size(), 2);
+        userRepository.removeUser(user);
+        Assert.assertEquals(userRepository.getAllUsers().size(), 1);
     }
 }

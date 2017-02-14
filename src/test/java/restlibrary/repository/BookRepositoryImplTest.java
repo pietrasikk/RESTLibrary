@@ -1,4 +1,4 @@
-package restlibrary.services;
+package restlibrary.repository;
 
 
 import org.junit.Assert;
@@ -16,24 +16,22 @@ import restlibrary.configuration.HibernateConfigurationTest;
 import restlibrary.model.Book;
 import restlibrary.model.enums.GenreTypeEnum;
 import restlibrary.model.enums.BookTypeEnum;
-import restlibrary.service.BookService;
 
 import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @WebAppConfiguration
 @ContextConfiguration(classes = {HibernateConfigurationTest.class})
-public class BookServiceImplTest {
+public class BookRepositoryImplTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
-    private BookService bookService;
+    private BookRepository bookRepository;
 
     @Test
     public void testForAddNewBook() {
@@ -49,11 +47,10 @@ public class BookServiceImplTest {
         newBook.setCopies(10);
         newBook.setGenreType(GenreTypeEnum.GUIDEBOOK);
 
-        Assert.assertEquals(bookService.getAllBooks().size(), 0);
-        bookService.addNewBook(newBook);
-        Assert.assertEquals(bookService.getAllBooks().size(), 1);
+        Assert.assertEquals(bookRepository.getAllBooks().size(), 0);
+        bookRepository.addNewBook(newBook);
+        Assert.assertEquals(bookRepository.getAllBooks().size(), 1);
     }
-
 
     @Test
     public void testForAddNewBookWithoutAnyRequiredAttribute() {
@@ -70,9 +67,8 @@ public class BookServiceImplTest {
         newBook.setCopies(10);
         newBook.setGenreType(GenreTypeEnum.GUIDEBOOK);
 
-        bookService.addNewBook(newBook);
+        bookRepository.addNewBook(newBook);
     }
-
 
     @Test
     public void testForRemoveBook() {
@@ -100,11 +96,11 @@ public class BookServiceImplTest {
         newBook_2.setCopies(5);
         newBook_2.setGenreType(GenreTypeEnum.DIARY);
 
-        Assert.assertEquals(bookService.getAllBooks().size(), 0);
-        bookService.addNewBook(newBook_1);
-        Book book = bookService.addNewBook(newBook_2);
-        Assert.assertEquals(bookService.getAllBooks().size(), 2);
-        bookService.removeBook(book);
-        Assert.assertEquals(bookService.getAllBooks().size(), 1);
+        Assert.assertEquals(bookRepository.getAllBooks().size(), 0);
+        bookRepository.addNewBook(newBook_1);
+        Book book = bookRepository.addNewBook(newBook_2);
+        Assert.assertEquals(bookRepository.getAllBooks().size(), 2);
+        bookRepository.removeBook(book);
+        Assert.assertEquals(bookRepository.getAllBooks().size(), 1);
     }
 }
