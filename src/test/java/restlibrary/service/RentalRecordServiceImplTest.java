@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import restlibrary.configuration.HibernateConfigurationTest;
 import restlibrary.model.Book;
 import restlibrary.model.User;
+import restlibrary.model.enums.RentalRecordStatusEnum;
 
 import java.util.Arrays;
 
@@ -50,6 +51,7 @@ public class RentalRecordServiceImplTest {
 
         Assert.assertNotEquals(user.getRentalRecords(), 0);
         Assert.assertEquals(user.getRentalRecords().size(), 3);
+        Assert.assertEquals(user.getRentalRecords().get(0).getRentalRecordStatus(), RentalRecordStatusEnum.RENTED);
         Assert.assertEquals(book_1.getCopies(), 11);
         Assert.assertEquals(book_2.getCopies(), 2);
         Assert.assertEquals(book_3.getCopies(), 6);
