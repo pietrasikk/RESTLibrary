@@ -13,4 +13,6 @@ public interface BookRepository {
     void removeBook(Book book);
 
     List<Book> getAllBooks();
+
+    Book updateBook(Book book);
 }

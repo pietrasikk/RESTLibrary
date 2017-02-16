@@ -18,7 +18,7 @@ public class BookRepositoryImpl implements BookRepository {
     private EntityManager entityManager;
 
     public Book addNewBook(Book newBook) {
-        return entityManager.merge(newBook);
+        return saveOrUpdate(newBook);
     }
 
     public Book getBookById(Long id) {
@@ -38,5 +38,13 @@ public class BookRepositoryImpl implements BookRepository {
         Root<Book> root = cq.from(Book.class);
         cq.select(root);
         return entityManager.createQuery(cq).getResultList();
+    }
+
+    public Book updateBook(Book book) {
+        return saveOrUpdate(book);
+    }
+
+    private Book saveOrUpdate(Book book) {
+        return entityManager.merge(book);
     }
 }
