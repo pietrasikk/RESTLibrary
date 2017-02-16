@@ -68,6 +68,7 @@ public class User implements Serializable {
     }
 
     @Column(name = "USER_ROLE", nullable = false)
+    @Enumerated(EnumType.STRING)
     public UserRoleEnum getRole() {
         return role;
     }

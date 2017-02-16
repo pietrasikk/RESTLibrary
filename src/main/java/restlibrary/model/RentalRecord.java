@@ -69,6 +69,7 @@ public class RentalRecord implements Serializable {
     }
 
     @Column(name = "RENTAL_RECORD_STATUS")
+    @Enumerated(EnumType.STRING)
     public RentalRecordStatusEnum getRentalRecordStatus() {
         return rentalRecordStatus;
     }

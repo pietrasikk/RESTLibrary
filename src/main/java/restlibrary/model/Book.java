@@ -96,6 +96,7 @@ public class Book implements Serializable {
     }
 
     @Column(name = "BOOK_TYPE", nullable = false)
+    @Enumerated(EnumType.STRING)
     public BookTypeEnum getBookType() {
         return bookType;
     }
@@ -159,6 +160,7 @@ public class Book implements Serializable {
     }
 
     @Column(name = "GENRE_TYPE", nullable = false)
+    @Enumerated(EnumType.STRING)
     public GenreTypeEnum getGenreType() {
         return genreType;
     }

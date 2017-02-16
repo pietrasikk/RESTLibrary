@@ -14,4 +14,6 @@ public interface UserRepository {
     List<User> getAllUsers();
 
     User getUserById(Long userId);
+
+    User updateUser(User user);
 }

@@ -19,7 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User addNewUser(User newUser) {
-        return entityManager.merge(newUser);
+        return insertOrUpdate(newUser);
     }
 
     @Override
@@ -41,5 +41,14 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User getUserById(Long userId) {
         return entityManager.find(User.class, userId);
+    }
+
+    @Override
+    public User updateUser(User user) {
+        return insertOrUpdate(user);
+    }
+
+    private User insertOrUpdate(User user) {
+        return entityManager.merge(user);
     }
 }
