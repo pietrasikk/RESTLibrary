@@ -16,4 +16,6 @@ public interface UserRepository {
     User getUserById(Long userId);
 
     User updateUser(User user);
+
+    User findByLogin(String login);
 }

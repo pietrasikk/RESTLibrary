@@ -1,13 +1,14 @@
 package restlibrary.service;
 
 
+import restlibrary.exception.service.UserException;
 import restlibrary.model.User;
 
 import java.util.List;
 
 public interface UserService {
 
-    User addNewUser(User newUser);
+    User addNewUser(User newUser) throws UserException;
 
     void removeUser(User user);
 

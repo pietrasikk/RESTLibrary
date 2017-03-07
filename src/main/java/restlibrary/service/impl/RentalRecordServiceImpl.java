@@ -1,6 +1,8 @@
 package restlibrary.service.impl;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,8 @@ import java.util.List;
 @Service("rentalRecordService")
 public class RentalRecordServiceImpl implements RentalRecordService {
 
+    private static final Logger logger = LogManager.getLogger(RentalRecordServiceImpl.class);
+
     @Autowired
     private RentalRecordRepository rentalRecordRepository;
 
@@ -34,9 +38,11 @@ public class RentalRecordServiceImpl implements RentalRecordService {
     public String rentBooks(Long userId, List<Long> booksIds) {
 
         if (booksIds.isEmpty()) {
+            logger.info("User with id: " + userId + " did not pass any books.");
             return "There is no books to rent.";
         }
 
+        logger.info("Starting rent books with id: " + booksIds.toString());
         User user = userRepository.getUserById(userId);
         List<RentalRecord> rentalRecords = new ArrayList<>();
 
@@ -56,6 +62,7 @@ public class RentalRecordServiceImpl implements RentalRecordService {
         }
         user.setRentalRecords(rentalRecords);
         userRepository.updateUser(user);
+        logger.info("The books: " + booksIds.toString() + " have been rented.");
 
         return "The books are rented.";
     }

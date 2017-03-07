@@ -56,4 +56,9 @@ public class RentalRecordServiceImplTest {
         Assert.assertEquals(book_2.getCopies(), 2);
         Assert.assertEquals(book_3.getCopies(), 6);
     }
+
+    @Test
+    public void testForRentNoBooks() {
+        rentalRecordService.rentBooks(1l, Arrays.asList());
+    }
 }
