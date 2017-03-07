@@ -48,6 +48,14 @@ public class UserRepositoryImpl implements UserRepository {
         return insertOrUpdate(user);
     }
 
+    @Override
+    public User findByLogin(String login) {
+        return entityManager.createQuery("from User u "
+                + "where u.login = :login", User.class)
+                .setParameter("login", login)
+                .getSingleResult();
+    }
+
     private User insertOrUpdate(User user) {
         return entityManager.merge(user);
     }

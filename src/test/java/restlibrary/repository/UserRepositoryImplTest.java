@@ -25,6 +25,8 @@ import javax.persistence.PersistenceException;
 @ContextConfiguration(classes = {HibernateConfigurationTest.class})
 public class UserRepositoryImplTest {
 
+    //TODO: remove this class after implement remove user process
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
