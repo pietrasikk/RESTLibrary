@@ -18,8 +18,8 @@ public class UserRepositoryImpl implements UserRepository {
     private EntityManager entityManager;
 
     @Override
-    public User addNewUser(User newUser) {
-        return insertOrUpdate(newUser);
+    public void addNewUser(User newUser) {
+        entityManager.merge(newUser);
     }
 
     @Override

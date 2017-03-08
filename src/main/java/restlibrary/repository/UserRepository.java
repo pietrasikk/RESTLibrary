@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserRepository {
 
-    User addNewUser(User newUser);
+    void addNewUser(User newUser);
 
     void removeUser(User user);
 
