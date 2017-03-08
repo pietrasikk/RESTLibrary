@@ -1,18 +1,24 @@
 package restlibrary.exception.rest;
 
-import java.io.Serializable;
 
+public class RestLibraryError {
 
-public class RestLibraryError implements Serializable {
-
-    private static final long serialVersionUID = -5306088220288021507L;
-
+    private int status;
     private String errorMessage;
-    private String exceptionClass;
+    private String url;
 
-    public RestLibraryError(String errorMessage, String exceptionClass) {
+    public RestLibraryError(int status, String errorMessage, String url) {
+        this.status = status;
         this.errorMessage = errorMessage;
-        this.exceptionClass = exceptionClass;
+        this.url = url;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getErrorMessage() {
@@ -23,11 +29,11 @@ public class RestLibraryError implements Serializable {
         this.errorMessage = errorMessage;
     }
 
-    public String getExceptionClass() {
-        return exceptionClass;
+    public String getUrl() {
+        return url;
     }
 
-    public void setExceptionClass(String exceptionClass) {
-        this.exceptionClass = exceptionClass;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

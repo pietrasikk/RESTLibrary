@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import restlibrary.exception.service.UserException;
 import restlibrary.model.User;
 import restlibrary.repository.UserRepository;
@@ -13,6 +14,7 @@ import restlibrary.service.UserService;
 import javax.persistence.NoResultException;
 import java.util.List;
 
+@Transactional
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
@@ -22,10 +24,10 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User addNewUser(User newUser) throws UserException {
+    public void addNewUser(User newUser) throws UserException {
         validateNewUser(newUser);
         checkIfThatUserExist(newUser);
-        return userRepository.addNewUser(newUser);
+        userRepository.addNewUser(newUser);
     }
 
     @Override

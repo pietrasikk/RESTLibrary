@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserService {
 
-    User addNewUser(User newUser) throws UserException;
+    void addNewUser(User newUser) throws UserException;
 
     void removeUser(User user);
 
