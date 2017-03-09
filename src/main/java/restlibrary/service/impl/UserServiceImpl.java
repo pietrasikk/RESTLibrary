@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
         validateNewUser(newUser);
         checkIfThatUserExist(newUser);
         userRepository.addNewUser(newUser);
+        logger.info("New user has been added." + newUser);
     }
 
     @Override
