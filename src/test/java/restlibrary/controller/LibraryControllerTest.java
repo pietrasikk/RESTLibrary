@@ -65,5 +65,4 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.url").value("http://localhost" + ADD_NEW_USER))
                 .andReturn();
     }
-
 }
