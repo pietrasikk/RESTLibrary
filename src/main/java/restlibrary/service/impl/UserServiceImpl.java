@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
                 throw new UserException("User with that login already exist.");
             }
         } catch (NoResultException exception) {
-
+        } finally {
         }
     }
 }

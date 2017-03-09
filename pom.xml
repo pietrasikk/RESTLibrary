@@ -20,6 +20,7 @@
         <javax.servlet>3.1.0</javax.servlet>
         <org.apache.commons>3.0</org.apache.commons>
         <jackson-databind>2.8.7</jackson-databind>
+        <jsonpath>2.2.0</jsonpath>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -117,6 +118,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-databind}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${jsonpath}</version>
         </dependency>
     </dependencies>
 

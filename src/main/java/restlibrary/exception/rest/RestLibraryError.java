@@ -13,6 +13,9 @@ public class RestLibraryError {
         this.url = url;
     }
 
+    public RestLibraryError() {
+    }
+
     public int getStatus() {
         return status;
     }

@@ -1,12 +1,12 @@
 package restlibrary.message;
 
 
-public class SuccessMessage {
+public class SuccessMessageResponse {
 
     private int status;
     private String description;
 
-    public SuccessMessage(int status, String description) {
+    public SuccessMessageResponse(int status, String description) {
         this.status = status;
         this.description = description;
     }
