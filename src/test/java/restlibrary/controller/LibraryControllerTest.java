@@ -30,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LibraryControllerTest {
 
     public static final String ADD_NEW_USER = "/addNewUser";
+    public static final String ADD_NEW_BOOK = "/addNewBook";
+
     @Autowired
     private WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
@@ -63,6 +65,57 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.errorMessage").value("Login cannot be empty or blank."))
                 .andExpect(jsonPath("$.url").value("http://localhost" + ADD_NEW_USER))
+                .andReturn();
+    }
+
+
+    @Test
+    public void testForAddNewBook() throws Exception {
+        String book = "{\n" +
+                "\t\"title\" : \"title\",\n" +
+                "\t\"author_1\" : \"author_1\",\n" +
+                "\t\"bookType\" : \"BOOK\",\n" +
+                "\t\"language\" : \"language\",\n" +
+                "\t\"pages\" : 4,\n" +
+                "\t\"releaseYear\" : 1950,\n" +
+                "\t\"publishingHouse\" : \"publishingHouse\",\n" +
+                "\t\"isbn\" : \"isbn\",\n" +
+                "\t\"copies\" : 20,\n" +
+                "\t\"genreType\" : \"BIOGRAPHY\"\n" +
+                "}";
+        this.mockMvc.perform(post(ADD_NEW_BOOK).content(book).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.description").value("New book has beed added."))
+                .andReturn();
+    }
+
+    @Test
+    public void testForAddNewBookWithNullObject() throws Exception {
+        String book = "{}";
+        this.mockMvc.perform(post(ADD_NEW_BOOK).content(book).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("Book title cannot be empty or blank."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + ADD_NEW_BOOK))
+                .andReturn();
+    }
+
+    @Test
+    public void testOneOfErrorInAddNewBook() throws Exception {
+        String book = "{\n" +
+                "\t\"title\" : \"title\",\n" +
+                "\t\"bookType\" : \"BOOK\",\n" +
+                "\t\"language\" : \"language\",\n" +
+                "\t\"pages\" : 4,\n" +
+                "\t\"releaseYear\" : 1950,\n" +
+                "\t\"publishingHouse\" : \"publishingHouse\",\n" +
+                "\t\"isbn\" : \"isbn\",\n" +
+                "\t\"copies\" : 20,\n" +
+                "\t\"genreType\" : \"BIOGRAPHY\"\n" +
+                "}";
+        this.mockMvc.perform(post(ADD_NEW_BOOK).content(book).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("Book author cannot be empty or blank."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + ADD_NEW_BOOK))
                 .andReturn();
     }
 }
