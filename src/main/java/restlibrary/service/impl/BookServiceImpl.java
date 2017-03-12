@@ -29,11 +29,6 @@ public class BookServiceImpl implements BookService {
         bookRepository.addNewBook(newBook);
     }
 
-    private void throwException(String message) throws BookException {
-        logger.error(message);
-        throw new BookException(message);
-    }
-
     public Book getBookById(Long id) {
         return bookRepository.getBookById(id);
     }
@@ -92,7 +87,6 @@ public class BookServiceImpl implements BookService {
 
     private void checkIfThatBookExists(Book newBook) throws BookException {
         logger.info("Check if book with isbn: " + newBook.getIsbn() + " already exists.");
-
         try {
             Book book = bookRepository.findByISBN(newBook.getIsbn());
             if (book != null) {
@@ -104,5 +98,10 @@ public class BookServiceImpl implements BookService {
         } finally {
         }
         logger.info("Book with isbn: " + newBook.getIsbn() + " does not exist in database.");
+    }
+
+    private void throwException(String message) throws BookException {
+        logger.error(message);
+        throw new BookException(message);
     }
 }
