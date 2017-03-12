@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService {
         validateNewUser(newUser);
         checkIfThatUserExist(newUser);
         userRepository.addNewUser(newUser);
-        logger.info("New user has been added." + newUser);
     }
 
     @Override
@@ -47,23 +46,28 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateNewUser(User newUser) throws UserException {
+        logger.info("Start validate new user with login: " + newUser.getLogin());
         if (StringUtils.isBlank(newUser.getLogin())) {
-            logger.error("Login cannot be empty or blank. New User: " + newUser.toString());
-            throw new UserException("Login cannot be empty or blank.");
+            throwException("Login cannot be empty or blank.");
         }
 
         if (StringUtils.isBlank(newUser.getName())) {
-            logger.error("Name cannot be empty or blank. New User: " + newUser.toString());
-            throw new UserException("Name cannot be empty or blank.");
+            throwException("Name cannot be empty or blank.");
         }
 
         if (StringUtils.isBlank(newUser.getSurname())) {
-            logger.error("Surname cannot be empty or blank. New User: " + newUser.toString());
-            throw new UserException("Surname cannot be empty or blank.");
+            throwException("Surname cannot be empty or blank.");
         }
+        logger.info("Validate new user with login: " + newUser.getLogin() + " is finished.");
+    }
+
+    private void throwException(String errorMessage) throws UserException {
+        logger.error(errorMessage);
+        throw new UserException(errorMessage);
     }
 
     private void checkIfThatUserExist(User newUser) throws UserException {
+        logger.info("Check if user with login: " + newUser.getLogin() + " already exists.");
         try {
             User user = userRepository.findByLogin(newUser.getLogin());
             if (user != null) {
@@ -71,7 +75,9 @@ public class UserServiceImpl implements UserService {
                 throw new UserException("User with that login already exist.");
             }
         } catch (NoResultException exception) {
+            logger.info("User with login: " + newUser.getLogin() + " can be add to database.");
         } finally {
+            logger.info("User with login: " + newUser.getLogin() + " does not exist in database.");
         }
     }
 }
