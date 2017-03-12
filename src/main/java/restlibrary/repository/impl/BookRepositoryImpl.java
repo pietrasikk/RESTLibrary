@@ -17,8 +17,8 @@ public class BookRepositoryImpl implements BookRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Book addNewBook(Book newBook) {
-        return saveOrUpdate(newBook);
+    public void addNewBook(Book newBook) {
+        insertOrUpdate(newBook);
     }
 
     public Book getBookById(Long id) {
@@ -41,10 +41,15 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     public Book updateBook(Book book) {
-        return saveOrUpdate(book);
+        return insertOrUpdate(book);
     }
 
-    private Book saveOrUpdate(Book book) {
+    @Override
+    public Book findByISBN(String isbn) {
+        return entityManager.createQuery("from Book b where b.isbn = :isbn", Book.class).setParameter("isbn", isbn).getSingleResult();
+    }
+
+    private Book insertOrUpdate(Book book) {
         return entityManager.merge(book);
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface BookRepository {
 
-    Book addNewBook(Book newBook);
+    void addNewBook(Book newBook);
 
     Book getBookById(Long id);
 
@@ -15,4 +15,6 @@ public interface BookRepository {
     List<Book> getAllBooks();
 
     Book updateBook(Book book);
+
+    Book findByISBN(String isbn);
 }
