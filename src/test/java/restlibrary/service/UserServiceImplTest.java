@@ -70,7 +70,6 @@ public class UserServiceImplTest {
         userService.addNewUser(newUser);
     }
 
-
     @Test
     public void testForAddNewUserWithoutRequiredField() throws UserException {
         thrown.expect(UserException.class);

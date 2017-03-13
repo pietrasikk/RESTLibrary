@@ -169,7 +169,7 @@ public class Book implements Serializable {
         this.genreType = genreType;
     }
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany
     public List<RentalRecord> getRentalRecords() {
         return rentalRecords;
     }

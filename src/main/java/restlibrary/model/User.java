@@ -77,7 +77,7 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany
     public List<RentalRecord> getRentalRecords() {
         return rentalRecords;
     }

@@ -50,7 +50,6 @@ public class BookServiceImplTest {
         Assert.assertEquals(bookService.getAllBooks().size(), 1);
     }
 
-
     @Test
     public void testForAddTheSameBook() throws BookException {
         thrown.expect(BookException.class);
