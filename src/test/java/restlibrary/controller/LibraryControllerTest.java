@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +32,7 @@ public class LibraryControllerTest {
 
     public static final String ADD_NEW_USER = "/addNewUser";
     public static final String ADD_NEW_BOOK = "/addNewBook";
+    public static final String GET_ALL_RESERVED_BOOKS = "/getAllReservedBooks";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -67,7 +69,6 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.url").value("http://localhost" + ADD_NEW_USER))
                 .andReturn();
     }
-
 
     @Test
     public void testForAddNewBook() throws Exception {
@@ -117,5 +118,18 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.errorMessage").value("Book author cannot be empty or blank."))
                 .andExpect(jsonPath("$.url").value("http://localhost" + ADD_NEW_BOOK))
                 .andReturn();
+    }
+
+    @Test
+    @Sql({"/getReservedBooksList.sql"})
+    public void testForGetAllReservedBooks() throws Exception {
+        this.mockMvc.perform(get(GET_ALL_RESERVED_BOOKS)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].book.title").value("Test_title_1"))
+                .andExpect(jsonPath("$[1].book.title").value("Test_title_2"));
+    }
+
+    @Test
+    public void testForGetZeroReservedBooks() throws Exception {
+        this.mockMvc.perform(get(GET_ALL_RESERVED_BOOKS)).andDo(print()).andExpect(status().isOk());
     }
 }

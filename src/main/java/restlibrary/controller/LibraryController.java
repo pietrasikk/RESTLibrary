@@ -10,9 +10,13 @@ import restlibrary.exception.service.BookException;
 import restlibrary.exception.service.UserException;
 import restlibrary.message.SuccessMessageResponse;
 import restlibrary.model.Book;
+import restlibrary.model.RentalRecord;
 import restlibrary.model.User;
 import restlibrary.service.BookService;
+import restlibrary.service.ReservationHistoryService;
 import restlibrary.service.UserService;
+
+import java.util.List;
 
 @RestController
 public class LibraryController {
@@ -24,6 +28,9 @@ public class LibraryController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private ReservationHistoryService reservationHistoryService;
 
     @RequestMapping(value = "/addNewUser", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<SuccessMessageResponse> addNewUser(@RequestBody User newUser) throws UserException {
@@ -41,6 +48,11 @@ public class LibraryController {
         SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "New book has beed added.");
         logger.info("New book with isbn: " + newBook.getIsbn() + " has been added.");
         return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getAllReservedBooks", method = RequestMethod.GET, produces = "application/json")
+    public List<RentalRecord> getAllReservedBooks() {
+        return reservationHistoryService.getReservedBooksList();
     }
 }
 
