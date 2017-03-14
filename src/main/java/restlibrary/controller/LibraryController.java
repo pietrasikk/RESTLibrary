@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import restlibrary.exception.service.BookException;
+import restlibrary.exception.service.ReservationHistoryException;
 import restlibrary.exception.service.UserException;
 import restlibrary.message.SuccessMessageResponse;
 import restlibrary.model.Book;
@@ -58,6 +59,11 @@ public class LibraryController {
     @RequestMapping(value = "/getAllRentedBooks", method = RequestMethod.GET, produces = "application/json")
     public List<RentalRecord> getAllRentedBooks() {
         return reservationHistoryService.getRentedBooksList();
+    }
+
+    @RequestMapping(value = "/getAllClientRentedBooks/{userId}", method = RequestMethod.GET, produces = "application/json")
+    public List<RentalRecord> getAllClientRentedBooks(@PathVariable("userId") Long userId) throws ReservationHistoryException, UserException {
+        return reservationHistoryService.getRentedClientBooksList(userId);
     }
 }
 

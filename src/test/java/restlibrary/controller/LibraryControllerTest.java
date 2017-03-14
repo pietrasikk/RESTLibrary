@@ -34,6 +34,7 @@ public class LibraryControllerTest {
     public static final String ADD_NEW_BOOK = "/addNewBook";
     public static final String GET_ALL_RESERVED_BOOKS = "/getAllReservedBooks";
     public static final String GET_ALL_RENTED_BOOKS = "/getAllRentedBooks";
+    public static final String GET_ALL_USER_RENTED_BOOKS = "/getAllClientRentedBooks/";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -147,5 +148,32 @@ public class LibraryControllerTest {
     @Test
     public void testForGetZeroRentedBooks() throws Exception {
         this.mockMvc.perform(get(GET_ALL_RENTED_BOOKS)).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    @Sql({"/getRentedClientBooksList.sql"})
+    public void testForGetAllClientRentedBooks() throws Exception {
+        Long userId = 1L;
+        this.mockMvc.perform(get(GET_ALL_USER_RENTED_BOOKS + userId)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].book.title").value("Test_title_1"))
+                .andExpect(jsonPath("$[0].rentalRecordStatus").value("RENTED"))
+                .andExpect(jsonPath("$[1].book.title").value("Test_title_2"));
+    }
+
+    @Test
+    @Sql({"/getZeoRentedClientBooksList.sql"})
+    public void testForGetZeroCustomerRentedBooks() throws Exception {
+        Long userId = 1L;
+        this.mockMvc.perform(get(GET_ALL_USER_RENTED_BOOKS + userId)).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    public void testForWrongClientId() throws Exception {
+        Long userId = 2L;
+        this.mockMvc.perform(get(GET_ALL_USER_RENTED_BOOKS + userId)).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("User with that id: 2 does not exist."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + GET_ALL_USER_RENTED_BOOKS + userId))
+                .andReturn();
     }
 }
