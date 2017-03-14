@@ -8,4 +8,6 @@ import java.util.List;
 public interface ReservationHistoryService {
 
     List<RentalRecord> getReservedBooksList();
+
+    List<RentalRecord> getRentedBooksList();
 }

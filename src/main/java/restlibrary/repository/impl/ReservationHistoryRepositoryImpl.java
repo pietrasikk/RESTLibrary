@@ -20,4 +20,9 @@ public class ReservationHistoryRepositoryImpl implements ReservationHistoryRepos
     public List<RentalRecord> getReservedBooksList() {
         return entityManager.createQuery("from RentalRecord r where r.rentalRecordStatus = :rentalRecordStatus").setParameter("rentalRecordStatus", RentalRecordStatusEnum.RESERVED).getResultList();
     }
+
+    @Override
+    public List<RentalRecord> getRentedBooksList() {
+        return entityManager.createQuery("from RentalRecord r where r.rentalRecordStatus = :rentalRecordStatus").setParameter("rentalRecordStatus", RentalRecordStatusEnum.RENTED).getResultList();
+    }
 }
