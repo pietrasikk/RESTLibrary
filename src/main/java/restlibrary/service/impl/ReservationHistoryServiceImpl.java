@@ -28,4 +28,12 @@ public class ReservationHistoryServiceImpl implements ReservationHistoryService 
         logger.info("Finish getting list of reserved books.");
         return reservedBooksList;
     }
+
+    @Override
+    public List<RentalRecord> getRentedBooksList() {
+        logger.info("Start getting list of rented books.");
+        List<RentalRecord> rentedBooksList = rentalRecordHistoryRepository.getRentedBooksList();
+        logger.info("Finish getting list of rented books.");
+        return rentedBooksList;
+    }
 }

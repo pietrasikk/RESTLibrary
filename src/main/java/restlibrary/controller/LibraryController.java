@@ -54,5 +54,10 @@ public class LibraryController {
     public List<RentalRecord> getAllReservedBooks() {
         return reservationHistoryService.getReservedBooksList();
     }
+
+    @RequestMapping(value = "/getAllRentedBooks", method = RequestMethod.GET, produces = "application/json")
+    public List<RentalRecord> getAllRentedBooks() {
+        return reservationHistoryService.getRentedBooksList();
+    }
 }
 

@@ -33,6 +33,7 @@ public class LibraryControllerTest {
     public static final String ADD_NEW_USER = "/addNewUser";
     public static final String ADD_NEW_BOOK = "/addNewBook";
     public static final String GET_ALL_RESERVED_BOOKS = "/getAllReservedBooks";
+    public static final String GET_ALL_RENTED_BOOKS = "/getAllRentedBooks";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -125,11 +126,26 @@ public class LibraryControllerTest {
     public void testForGetAllReservedBooks() throws Exception {
         this.mockMvc.perform(get(GET_ALL_RESERVED_BOOKS)).andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].book.title").value("Test_title_1"))
+                .andExpect(jsonPath("$[0].rentalRecordStatus").value("RESERVED"))
                 .andExpect(jsonPath("$[1].book.title").value("Test_title_2"));
     }
 
     @Test
     public void testForGetZeroReservedBooks() throws Exception {
         this.mockMvc.perform(get(GET_ALL_RESERVED_BOOKS)).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    @Sql({"/getRentedBooksList.sql"})
+    public void testForGetAllRentedBooks() throws Exception {
+        this.mockMvc.perform(get(GET_ALL_RENTED_BOOKS)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].book.title").value("Test_title_1"))
+                .andExpect(jsonPath("$[0].rentalRecordStatus").value("RENTED"))
+                .andExpect(jsonPath("$[1].book.title").value("Test_title_2"));
+    }
+
+    @Test
+    public void testForGetZeroRentedBooks() throws Exception {
+        this.mockMvc.perform(get(GET_ALL_RENTED_BOOKS)).andDo(print()).andExpect(status().isOk());
     }
 }

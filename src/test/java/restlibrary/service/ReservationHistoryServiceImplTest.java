@@ -39,9 +39,26 @@ public class ReservationHistoryServiceImplTest {
     }
 
     @Test
+    @Sql({"/getRentedBooksList.sql"})
+    public void testForGetAllBooksWithRentedStatus() {
+        List<RentalRecord> rentedBooksList = reservationHistoryService.getRentedBooksList();
+
+        Assert.assertEquals(rentedBooksList.size(), 4);
+        Assert.assertEquals(rentedBooksList.get(0).getRentalRecordStatus(), RentalRecordStatusEnum.RENTED);
+        Assert.assertEquals(rentedBooksList.get(1).getRentalRecordStatus(), RentalRecordStatusEnum.RENTED);
+        Assert.assertEquals(rentedBooksList.get(2).getRentalRecordStatus(), RentalRecordStatusEnum.RENTED);
+        Assert.assertEquals(rentedBooksList.get(3).getRentalRecordStatus(), RentalRecordStatusEnum.RENTED);
+    }
+
+    @Test
     public void testForGetZeroBooksWithReservedStatus() {
         List<RentalRecord> reservedBooksList = reservationHistoryService.getReservedBooksList();
-
         Assert.assertEquals(reservedBooksList.size(), 0);
+    }
+
+    @Test
+    public void testForGetZeroBooksWithRentedStatus() {
+        List<RentalRecord> rentedBooksList = reservationHistoryService.getRentedBooksList();
+        Assert.assertEquals(rentedBooksList.size(), 0);
     }
 }
