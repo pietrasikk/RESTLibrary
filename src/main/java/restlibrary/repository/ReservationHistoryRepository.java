@@ -10,4 +10,6 @@ public interface ReservationHistoryRepository {
     List<RentalRecord> getReservedBooksList();
 
     List<RentalRecord> getRentedBooksList();
+
+    List<RentalRecord> getRentedClientBooksList(Long userId);
 }
