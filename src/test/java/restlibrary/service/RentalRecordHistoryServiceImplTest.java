@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import restlibrary.configuration.HibernateConfigurationTest;
-import restlibrary.exception.service.ReservationHistoryException;
+import restlibrary.exception.service.RentalRecordHistoryException;
 import restlibrary.exception.service.UserException;
 import restlibrary.model.RentalRecord;
 import restlibrary.model.enums.RentalRecordStatusEnum;
@@ -25,18 +25,18 @@ import java.util.List;
 @Transactional
 @WebAppConfiguration
 @ContextConfiguration(classes = {HibernateConfigurationTest.class})
-public class ReservationHistoryServiceImplTest {
+public class RentalRecordHistoryServiceImplTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
-    private ReservationHistoryService reservationHistoryService;
+    private RentalRecordHistoryService rentalRecordHistoryService;
 
     @Test
     @Sql({"/getReservedBooksList.sql"})
     public void testForGetAllBooksWithReservedStatus() {
-        List<RentalRecord> reservedBooksList = reservationHistoryService.getReservedBooksList();
+        List<RentalRecord> reservedBooksList = rentalRecordHistoryService.getReservedBooksList();
 
         Assert.assertEquals(reservedBooksList.size(), 4);
         Assert.assertEquals(reservedBooksList.get(0).getRentalRecordStatus(), RentalRecordStatusEnum.RESERVED);
@@ -48,7 +48,7 @@ public class ReservationHistoryServiceImplTest {
     @Test
     @Sql({"/getRentedBooksList.sql"})
     public void testForGetAllBooksWithRentedStatus() {
-        List<RentalRecord> rentedBooksList = reservationHistoryService.getRentedBooksList();
+        List<RentalRecord> rentedBooksList = rentalRecordHistoryService.getRentedBooksList();
 
         Assert.assertEquals(rentedBooksList.size(), 4);
         Assert.assertEquals(rentedBooksList.get(0).getRentalRecordStatus(), RentalRecordStatusEnum.RENTED);
@@ -59,21 +59,21 @@ public class ReservationHistoryServiceImplTest {
 
     @Test
     public void testForGetZeroBooksWithReservedStatus() {
-        List<RentalRecord> reservedBooksList = reservationHistoryService.getReservedBooksList();
+        List<RentalRecord> reservedBooksList = rentalRecordHistoryService.getReservedBooksList();
         Assert.assertEquals(reservedBooksList.size(), 0);
     }
 
     @Test
     public void testForGetZeroBooksWithRentedStatus() {
-        List<RentalRecord> rentedBooksList = reservationHistoryService.getRentedBooksList();
+        List<RentalRecord> rentedBooksList = rentalRecordHistoryService.getRentedBooksList();
         Assert.assertEquals(rentedBooksList.size(), 0);
     }
 
     @Test
     @Sql({"/getRentedClientBooksList.sql"})
-    public void testForGetAllClientBooksWithRentedStatus() throws ReservationHistoryException, UserException {
+    public void testForGetAllClientBooksWithRentedStatus() throws RentalRecordHistoryException, UserException {
         Long userId = 1L;
-        List<RentalRecord> rentedClientBooksList = reservationHistoryService.getRentedClientBooksList(userId);
+        List<RentalRecord> rentedClientBooksList = rentalRecordHistoryService.getRentedClientBooksList(userId);
 
         Assert.assertEquals(rentedClientBooksList.size(), 3);
         Assert.assertEquals(rentedClientBooksList.get(0).getRentalRecordStatus(), RentalRecordStatusEnum.RENTED);
@@ -83,29 +83,29 @@ public class ReservationHistoryServiceImplTest {
 
     @Test
     @Sql({"/getZeoRentedClientBooksList.sql"})
-    public void testForGetZeroClientBooksWithRentedStatus() throws ReservationHistoryException, UserException {
+    public void testForGetZeroClientBooksWithRentedStatus() throws RentalRecordHistoryException, UserException {
         Long userId = 1L;
-        List<RentalRecord> rentedClientBooksList = reservationHistoryService.getRentedClientBooksList(userId);
+        List<RentalRecord> rentedClientBooksList = rentalRecordHistoryService.getRentedClientBooksList(userId);
         Assert.assertEquals(rentedClientBooksList.size(), 0);
     }
 
     @Test
-    public void testForNullClientId() throws ReservationHistoryException, UserException {
-        thrown.expect(ReservationHistoryException.class);
+    public void testForNullClientId() throws RentalRecordHistoryException, UserException {
+        thrown.expect(RentalRecordHistoryException.class);
         thrown.expectMessage("Client id param cannot be null or empty.");
 
         Long userId = null;
-        List<RentalRecord> rentedClientBooksList = reservationHistoryService.getRentedClientBooksList(userId);
+        List<RentalRecord> rentedClientBooksList = rentalRecordHistoryService.getRentedClientBooksList(userId);
         Assert.assertEquals(rentedClientBooksList.size(), 0);
     }
 
     @Test
-    public void testForWrongClientId() throws ReservationHistoryException, UserException {
+    public void testForWrongClientId() throws RentalRecordHistoryException, UserException {
         thrown.expect(UserException.class);
         thrown.expectMessage("User with that id: 2 does not exist.");
 
         Long userId = 2L;
-        List<RentalRecord> rentedClientBooksList = reservationHistoryService.getRentedClientBooksList(userId);
+        List<RentalRecord> rentedClientBooksList = rentalRecordHistoryService.getRentedClientBooksList(userId);
         Assert.assertEquals(rentedClientBooksList.size(), 0);
     }
 }

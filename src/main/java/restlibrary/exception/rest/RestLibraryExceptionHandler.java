@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import restlibrary.exception.service.BookException;
-import restlibrary.exception.service.ReservationHistoryException;
+import restlibrary.exception.service.RentalRecordHistoryException;
 import restlibrary.exception.service.UserException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +27,8 @@ public class RestLibraryExceptionHandler extends ResponseEntityExceptionHandler 
         return new ResponseEntity<>(restLibraryError, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ReservationHistoryException.class})
-    public ResponseEntity<RestLibraryError> handleReservationHistoryException(ReservationHistoryException ex, HttpServletRequest req) {
+    @ExceptionHandler({RentalRecordHistoryException.class})
+    public ResponseEntity<RestLibraryError> handleReservationHistoryException(RentalRecordHistoryException ex, HttpServletRequest req) {
         RestLibraryError restLibraryError = new RestLibraryError(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), req.getRequestURL().toString());
         return new ResponseEntity<>(restLibraryError, HttpStatus.BAD_REQUEST);
     }
