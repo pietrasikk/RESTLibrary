@@ -12,6 +12,7 @@ import restlibrary.exception.service.UserException;
 import restlibrary.message.SuccessMessageResponse;
 import restlibrary.model.Book;
 import restlibrary.model.RentalRecord;
+import restlibrary.model.SearchedBook;
 import restlibrary.model.User;
 import restlibrary.service.BookService;
 import restlibrary.service.ReservationHistoryService;
@@ -64,6 +65,11 @@ public class LibraryController {
     @RequestMapping(value = "/getAllClientRentedBooks/{userId}", method = RequestMethod.GET, produces = "application/json")
     public List<RentalRecord> getAllClientRentedBooks(@PathVariable("userId") Long userId) throws ReservationHistoryException, UserException {
         return reservationHistoryService.getRentedClientBooksList(userId);
+    }
+
+    @RequestMapping(value = "/findBooks", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public List<Book> findBooks(@RequestBody SearchedBook searchedBook) throws BookException {
+        return bookService.findBooks(searchedBook);
     }
 }
 
