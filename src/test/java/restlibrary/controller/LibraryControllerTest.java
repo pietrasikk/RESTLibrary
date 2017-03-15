@@ -35,6 +35,7 @@ public class LibraryControllerTest {
     public static final String GET_ALL_RESERVED_BOOKS = "/getAllReservedBooks";
     public static final String GET_ALL_RENTED_BOOKS = "/getAllRentedBooks";
     public static final String GET_ALL_USER_RENTED_BOOKS = "/getAllClientRentedBooks/";
+    public static final String FIND_BOOKS = "/findBooks/";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -175,5 +176,29 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.errorMessage").value("User with that id: 2 does not exist."))
                 .andExpect(jsonPath("$.url").value("http://localhost" + GET_ALL_USER_RENTED_BOOKS + userId))
                 .andReturn();
+    }
+
+    @Test
+    @Sql({"/searchBooks.sql"})
+    public void testForFindBooks() throws Exception {
+        String books = "{\"title\":\"Test_title_1\",\t\"author\":\"Test_author_2\",\t\"publishingHouse\":\"P_H_3\",\t\"isbn\":\"ISBN_4\"}";
+        this.mockMvc.perform(post(FIND_BOOKS).content(books).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$[0].language").value("EN"))
+                .andExpect(jsonPath("$[0].pages").value(150))
+                .andExpect(jsonPath("$[2].publishingHouse").value("P_H_3"))
+                .andExpect(jsonPath("$[2].pages").value(130))
+                .andReturn();
+    }
+
+    @Test
+    public void testForFindBooksWithNullObject() throws Exception {
+        this.mockMvc.perform(post(FIND_BOOKS).contentType("application/json")).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testForBooksWithEmptyObject() throws Exception {
+        String books = "{}";
+        this.mockMvc.perform(post(FIND_BOOKS).content(books).contentType("application/json")).andDo(print()).andExpect(status().isOk());
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import restlibrary.exception.service.BookException;
 import restlibrary.model.Book;
+import restlibrary.model.SearchedBook;
 import restlibrary.repository.BookRepository;
 import restlibrary.service.BookService;
 
@@ -39,6 +40,17 @@ public class BookServiceImpl implements BookService {
 
     public List<Book> getAllBooks() {
         return bookRepository.getAllBooks();
+    }
+
+    public List<Book> findBooks(SearchedBook searchedBook) throws BookException {
+        if (searchedBook == null) {
+            logger.error("Criteria for book cannot be null or empty.");
+            throw new BookException("Criteria for book cannot be null or empty.");
+        }
+        logger.info("Start searching for criteria: " + searchedBook.toString());
+        List<Book> books = bookRepository.findBooks(searchedBook);
+        logger.info("Stop searching for criteria: " + searchedBook.toString() + ". Found: " + books.size() + " books.");
+        return books;
     }
 
     private void validateNewBook(Book newBook) throws BookException {

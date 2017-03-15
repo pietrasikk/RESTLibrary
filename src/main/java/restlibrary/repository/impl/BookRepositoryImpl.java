@@ -2,6 +2,7 @@ package restlibrary.repository.impl;
 
 import org.springframework.stereotype.Repository;
 import restlibrary.model.Book;
+import restlibrary.model.SearchedBook;
 import restlibrary.repository.BookRepository;
 
 import javax.persistence.EntityManager;
@@ -47,6 +48,16 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public Book findByISBN(String isbn) {
         return entityManager.createQuery("from Book b where b.isbn = :isbn", Book.class).setParameter("isbn", isbn).getSingleResult();
+    }
+
+    @Override
+    public List<Book> findBooks(SearchedBook searchedBook) {
+        return entityManager.createQuery("from Book b where b.title = :title or b.author_1 = :author_1 or b.publishingHouse = :publishingHouse or b.isbn = :isbn")
+                .setParameter("title", searchedBook.getTitle())
+                .setParameter("author_1", searchedBook.getAuthor())
+                .setParameter("publishingHouse", searchedBook.getPublishingHouse())
+                .setParameter("isbn", searchedBook.getIsbn())
+                .getResultList();
     }
 
     private Book insertOrUpdate(Book book) {

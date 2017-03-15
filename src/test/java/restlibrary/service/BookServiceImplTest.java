@@ -9,12 +9,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import restlibrary.configuration.HibernateConfigurationTest;
 import restlibrary.exception.service.BookException;
 import restlibrary.model.Book;
+import restlibrary.model.SearchedBook;
 import restlibrary.model.enums.BookTypeEnum;
 import restlibrary.model.enums.GenreTypeEnum;
 
@@ -260,5 +262,41 @@ public class BookServiceImplTest {
         book.setPublishingHouse("Test_publishing_house");
 
         bookService.addNewBook(book);
+    }
+
+    @Test
+    @Sql({"/searchBooks.sql"})
+    public void testForSearchAllTypeOfCriteria() throws BookException {
+        SearchedBook searchedBook = new SearchedBook();
+
+        Assert.assertEquals(bookService.findBooks(searchedBook).size(), 0);
+
+        searchedBook.setTitle("Test_title_1");
+        Assert.assertEquals(bookService.findBooks(searchedBook).size(), 1);
+
+        searchedBook.setAuthor("Test_author_2");
+        Assert.assertEquals(bookService.findBooks(searchedBook).size(), 2);
+
+        searchedBook.setPublishingHouse("P_H_3");
+        Assert.assertEquals(bookService.findBooks(searchedBook).size(), 3);
+
+        searchedBook.setIsbn("ISBN_4");
+        Assert.assertEquals(bookService.findBooks(searchedBook).size(), 4);
+    }
+
+    @Test
+    public void testForSearchBookWhichDoesNotExist() throws BookException {
+        SearchedBook searchedBook = new SearchedBook();
+        searchedBook.setTitle("Test_title_1");
+
+        Assert.assertEquals(bookService.findBooks(searchedBook).size(), 0);
+    }
+
+    @Test
+    public void testForSearchBookWithNullCriteria() throws BookException {
+        thrown.expect(BookException.class);
+        thrown.expectMessage("Criteria for book cannot be null or empty.");
+
+        bookService.findBooks(null);
     }
 }

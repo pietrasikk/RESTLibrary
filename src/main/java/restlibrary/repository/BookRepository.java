@@ -1,6 +1,7 @@
 package restlibrary.repository;
 
 import restlibrary.model.Book;
+import restlibrary.model.SearchedBook;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface BookRepository {
     Book updateBook(Book book);
 
     Book findByISBN(String isbn);
+
+    List<Book> findBooks(SearchedBook searchedBook);
 }
