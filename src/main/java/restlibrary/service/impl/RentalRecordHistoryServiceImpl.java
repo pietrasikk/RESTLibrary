@@ -6,24 +6,24 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import restlibrary.exception.service.ReservationHistoryException;
+import restlibrary.exception.service.RentalRecordHistoryException;
 import restlibrary.exception.service.UserException;
 import restlibrary.model.RentalRecord;
 import restlibrary.model.User;
-import restlibrary.repository.ReservationHistoryRepository;
+import restlibrary.repository.RentalRecordHistoryRepository;
 import restlibrary.repository.UserRepository;
-import restlibrary.service.ReservationHistoryService;
+import restlibrary.service.RentalRecordHistoryService;
 
 import java.util.List;
 
 @Transactional
 @Service("reservationHistory")
-public class ReservationHistoryServiceImpl implements ReservationHistoryService {
+public class RentalRecordHistoryServiceImpl implements RentalRecordHistoryService {
 
-    private static final Logger logger = LogManager.getLogger(ReservationHistoryServiceImpl.class);
+    private static final Logger logger = LogManager.getLogger(RentalRecordHistoryServiceImpl.class);
 
     @Autowired
-    private ReservationHistoryRepository rentalRecordHistoryRepository;
+    private RentalRecordHistoryRepository rentalRecordHistoryRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -44,9 +44,9 @@ public class ReservationHistoryServiceImpl implements ReservationHistoryService 
         return rentedBooksList;
     }
 
-    public List<RentalRecord> getRentedClientBooksList(Long userId) throws ReservationHistoryException, UserException {
+    public List<RentalRecord> getRentedClientBooksList(Long userId) throws RentalRecordHistoryException, UserException {
         if (userId == null) {
-            throw new ReservationHistoryException("Client id param cannot be null or empty.");
+            throw new RentalRecordHistoryException("Client id param cannot be null or empty.");
         }
 
         User user = userRepository.getUserById(userId);

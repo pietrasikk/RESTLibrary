@@ -5,7 +5,7 @@ import restlibrary.model.RentalRecord;
 
 import java.util.List;
 
-public interface ReservationHistoryRepository {
+public interface RentalRecordHistoryRepository {
 
     List<RentalRecord> getReservedBooksList();
 
