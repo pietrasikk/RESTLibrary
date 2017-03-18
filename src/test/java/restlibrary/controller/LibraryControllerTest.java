@@ -19,6 +19,7 @@ import restlibrary.configuration.HibernateConfigurationTest;
 
 import javax.servlet.ServletContext;
 
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -36,6 +37,7 @@ public class LibraryControllerTest {
     public static final String GET_ALL_RENTED_BOOKS = "/getAllRentedBooks";
     public static final String GET_ALL_USER_RENTED_BOOKS = "/getAllClientRentedBooks/";
     public static final String FIND_BOOKS = "/findBooks/";
+    public static final String RESERVE_BOOKS = "/reserveBooks";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -200,5 +202,26 @@ public class LibraryControllerTest {
     public void testForBooksWithEmptyObject() throws Exception {
         String books = "{}";
         this.mockMvc.perform(post(FIND_BOOKS).content(books).contentType("application/json")).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    @Sql({"/testForReserveBooks.sql"})
+    public void testForReserveBooks() throws Exception {
+        String content = "{\t\"userId\":1,\t\"booksId\":[\t1 ]}";
+        this.mockMvc.perform(post(RESERVE_BOOKS).content(content).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.description").value("Books have been reserved."))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForReserveTheSameBooks.sql"})
+    public void testForReserveTheSameBooks() throws Exception {
+        String content = "{\t\"userId\":1,\t\"booksId\":[\t1 ]}";
+        this.mockMvc.perform(post(RESERVE_BOOKS).content(content).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("You already have reserved or rented one of this books."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + RESERVE_BOOKS))
+                .andReturn();
     }
 }
