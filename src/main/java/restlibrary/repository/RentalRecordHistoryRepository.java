@@ -12,4 +12,6 @@ public interface RentalRecordHistoryRepository {
     List<RentalRecord> getRentedBooksList();
 
     List<RentalRecord> getRentedClientBooksList(Long userId);
+
+    List<RentalRecord> getReservedClientBooksList(Long userId);
 }

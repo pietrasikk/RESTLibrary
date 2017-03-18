@@ -6,8 +6,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import restlibrary.exception.service.RentalRecordException;
 import restlibrary.model.Book;
 import restlibrary.model.RentalRecord;
+import restlibrary.model.RentedBook;
 import restlibrary.model.User;
 import restlibrary.model.enums.RentalRecordStatusEnum;
 import restlibrary.repository.BookRepository;
@@ -65,5 +67,57 @@ public class RentalRecordServiceImpl implements RentalRecordService {
         logger.info("The books: " + booksIds.toString() + " have been rented.");
 
         return "The books are rented.";
+    }
+
+    @Override
+    public void reserveBooks(RentedBook rentedBooks) throws RentalRecordException {
+        checkUserId(rentedBooks.getUserId());
+        checkBooks(rentedBooks.getBooksId());
+        logger.info("Start reservation books for client with id: " + rentedBooks.getUserId());
+        checkIfUserAlreadyHaveThisBooks(rentedBooks);
+        prepareReservation(rentedBooks);
+        logger.info("End reservation books for client with id: " + rentedBooks.getUserId());
+    }
+
+    private void prepareReservation(RentedBook rentedBooks) {
+        logger.info("Prepare Rental Records");
+        User user = userRepository.getUserById(rentedBooks.getUserId());
+        for (Long id : rentedBooks.getBooksId()) {
+            Book book = bookRepository.getBookById(id);
+
+            RentalRecord rentalRecord = new RentalRecord();
+            rentalRecord.setUser(user);
+            rentalRecord.setBook(book);
+            rentalRecord.setRentalRecordStatus(RentalRecordStatusEnum.RESERVED);
+            rentalRecordRepository.addRentalRecord(rentalRecord);
+
+            book.setCopies(book.getCopies() - 1);
+            bookRepository.updateBook(book);
+        }
+        logger.info("Save Rental Records into Database.");
+    }
+
+    private void checkBooks(List<Long> books) throws RentalRecordException {
+        if (books == null || books.isEmpty()) {
+            logger.error("Books cannot be null or empty.");
+            throw new RentalRecordException("Books cannot be null or empty.");
+        }
+    }
+
+    private void checkUserId(Long userId) throws RentalRecordException {
+        if (userId == null || userId == 0L) {
+            logger.error("User id cannot be null or empty.");
+            throw new RentalRecordException("User id cannot be null or empty.");
+        }
+    }
+
+    private void checkIfUserAlreadyHaveThisBooks(RentedBook rentedBooks) throws RentalRecordException {
+        logger.info("Check if user with id: " + rentedBooks.getUserId() + " already have on of this books.");
+        List<RentalRecord> reservedOrRentedBooksByBookId = rentalRecordRepository.getReservedOrRentedBooksByBookId(rentedBooks.getBooksId());
+        if (reservedOrRentedBooksByBookId.size() != 0) {
+            logger.error("User with id: " + rentedBooks.getUserId() + " already have this books.");
+            throw new RentalRecordException("You already have reserved or rented one of this books.");
+        }
+        logger.info("User with id: " + rentedBooks.getUserId() + " does not have this books.");
     }
 }
