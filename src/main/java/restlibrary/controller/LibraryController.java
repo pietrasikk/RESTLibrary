@@ -7,15 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import restlibrary.exception.service.BookException;
+import restlibrary.exception.service.RentalRecordException;
 import restlibrary.exception.service.RentalRecordHistoryException;
 import restlibrary.exception.service.UserException;
 import restlibrary.message.SuccessMessageResponse;
-import restlibrary.model.Book;
-import restlibrary.model.RentalRecord;
-import restlibrary.model.SearchedBook;
-import restlibrary.model.User;
+import restlibrary.model.*;
 import restlibrary.service.BookService;
 import restlibrary.service.RentalRecordHistoryService;
+import restlibrary.service.RentalRecordService;
 import restlibrary.service.UserService;
 
 import java.util.List;
@@ -30,6 +29,9 @@ public class LibraryController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private RentalRecordService rentalRecordService;
 
     @Autowired
     private RentalRecordHistoryService rentalRecordHistoryService;
@@ -70,6 +72,13 @@ public class LibraryController {
     @RequestMapping(value = "/findBooks", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public List<Book> findBooks(@RequestBody SearchedBook searchedBook) throws BookException {
         return bookService.findBooks(searchedBook);
+    }
+
+    @RequestMapping(value = "/reserveBooks", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity<SuccessMessageResponse> reserveBooks(@RequestBody RentedBook rentedBooks) throws RentalRecordException {
+        rentalRecordService.reserveBooks(rentedBooks);
+        SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "Books have been reserved.");
+        return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
     }
 }
 
