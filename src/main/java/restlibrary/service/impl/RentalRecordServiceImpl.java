@@ -17,8 +17,6 @@ import restlibrary.repository.RentalRecordRepository;
 import restlibrary.repository.UserRepository;
 import restlibrary.service.RentalRecordService;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -37,39 +35,6 @@ public class RentalRecordServiceImpl implements RentalRecordService {
     private BookRepository bookRepository;
 
     @Override
-    public String rentBooks(Long userId, List<Long> booksIds) {
-
-        if (booksIds.isEmpty()) {
-            logger.info("User with id: " + userId + " did not pass any books.");
-            return "There is no books to rent.";
-        }
-
-        logger.info("Starting rent books with id: " + booksIds.toString());
-        User user = userRepository.getUserById(userId);
-        List<RentalRecord> rentalRecords = new ArrayList<>();
-
-        for (Long id : booksIds) {
-            Book book = bookRepository.getBookById(id);
-
-            RentalRecord rentalRecord = new RentalRecord();
-            rentalRecord.setUser(user);
-            rentalRecord.setBook(book);
-            rentalRecord.setRentalDate(LocalDateTime.now());
-            rentalRecord.setRentalRecordStatus(RentalRecordStatusEnum.RENTED);
-            rentalRecords.add(rentalRecordRepository.addRentalRecord(rentalRecord));
-
-            book.setCopies(book.getCopies() - 1);
-            bookRepository.updateBook(book);
-
-        }
-        user.setRentalRecords(rentalRecords);
-        userRepository.updateUser(user);
-        logger.info("The books: " + booksIds.toString() + " have been rented.");
-
-        return "The books are rented.";
-    }
-
-    @Override
     public void reserveBooks(RentedBook rentedBooks) throws RentalRecordException {
         checkUserId(rentedBooks.getUserId());
         checkBooks(rentedBooks.getBooksId());
@@ -79,11 +44,12 @@ public class RentalRecordServiceImpl implements RentalRecordService {
         logger.info("End reservation books for client with id: " + rentedBooks.getUserId());
     }
 
-    private void prepareReservation(RentedBook rentedBooks) {
+    private void prepareReservation(RentedBook rentedBooks) throws RentalRecordException {
         logger.info("Prepare Rental Records");
         User user = userRepository.getUserById(rentedBooks.getUserId());
         for (Long id : rentedBooks.getBooksId()) {
             Book book = bookRepository.getBookById(id);
+            checkIfBookCopiesIsZero(book);
 
             RentalRecord rentalRecord = new RentalRecord();
             rentalRecord.setUser(user);
@@ -95,6 +61,13 @@ public class RentalRecordServiceImpl implements RentalRecordService {
             bookRepository.updateBook(book);
         }
         logger.info("Save Rental Records into Database.");
+    }
+
+    private void checkIfBookCopiesIsZero(Book book) throws RentalRecordException {
+        if (book.getCopies() <= 0) {
+            logger.error("There is no available copies for book id: " + book.getId());
+            throw new RentalRecordException("There is no available copies for book id: " + book.getId());
+        }
     }
 
     private void checkBooks(List<Long> books) throws RentalRecordException {

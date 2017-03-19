@@ -18,12 +18,10 @@ import restlibrary.exception.service.RentalRecordException;
 import restlibrary.model.Book;
 import restlibrary.model.RentalRecord;
 import restlibrary.model.RentedBook;
-import restlibrary.model.User;
 import restlibrary.model.enums.RentalRecordStatusEnum;
 import restlibrary.repository.RentalRecordHistoryRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Rollback
@@ -47,34 +45,6 @@ public class RentalRecordServiceImplTest {
 
     @Autowired
     private BookService bookService;
-
-    @Test
-    @Sql({"/testForRentBooks.sql"})
-    public void testForRentBooks() {
-        User user = userService.getUserById(1l);
-        Book book_1 = bookService.getBookById(1l);
-        Book book_2 = bookService.getBookById(2l);
-        Book book_3 = bookService.getBookById(3l);
-
-        Assert.assertEquals(user.getRentalRecords().size(), 0);
-        Assert.assertEquals(book_1.getCopies(), 12);
-        Assert.assertEquals(book_2.getCopies(), 3);
-        Assert.assertEquals(book_3.getCopies(), 7);
-
-        rentalRecordService.rentBooks(user.getId(), Arrays.asList(book_1.getId(), book_2.getId(), book_3.getId()));
-
-        Assert.assertNotEquals(user.getRentalRecords(), 0);
-        Assert.assertEquals(user.getRentalRecords().size(), 3);
-        Assert.assertEquals(user.getRentalRecords().get(0).getRentalRecordStatus(), RentalRecordStatusEnum.RENTED);
-        Assert.assertEquals(book_1.getCopies(), 11);
-        Assert.assertEquals(book_2.getCopies(), 2);
-        Assert.assertEquals(book_3.getCopies(), 6);
-    }
-
-    @Test
-    public void testForRentNoBooks() {
-        rentalRecordService.rentBooks(1l, Arrays.asList());
-    }
 
     @Test
     @Sql({"/testForReserveBooks.sql"})
@@ -109,6 +79,22 @@ public class RentalRecordServiceImplTest {
     public void testForReserveTheSameBooks() throws RentalRecordException {
         thrown.expect(RentalRecordException.class);
         thrown.expectMessage("You already have reserved or rented one of this books.");
+
+        RentedBook rentedBook = new RentedBook();
+        rentedBook.setUserId(1L);
+        ArrayList<Long> booksId = new ArrayList<>();
+        booksId.add(1L);
+        rentedBook.setBooksId(booksId);
+
+        rentalRecordService.reserveBooks(rentedBook);
+    }
+
+    @Test
+    @Sql({"/testForReserveBookWithNoCopiesLeft.sql"})
+    public void testForReserveBookWithNoCopiesLeft() throws RentalRecordException {
+        long bookId = 1L;
+        thrown.expect(RentalRecordException.class);
+        thrown.expectMessage("There is no available copies for book id: " + bookId);
 
         RentedBook rentedBook = new RentedBook();
         rentedBook.setUserId(1L);
