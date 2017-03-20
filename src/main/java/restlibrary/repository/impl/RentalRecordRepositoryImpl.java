@@ -29,4 +29,17 @@ public class RentalRecordRepositoryImpl implements RentalRecordRepository {
                 .setParameter("books", books)
                 .getResultList();
     }
+
+    @Override
+    public List<RentalRecord> getReserved(Long userId) {
+        return entityManager.createQuery("from RentalRecord r where r.user.id = :userId and r.rentalRecordStatus = :rentalRecordStatus")
+                .setParameter("userId", userId)
+                .setParameter("rentalRecordStatus", RentalRecordStatusEnum.RESERVED)
+                .getResultList();
+    }
+
+    @Override
+    public void update(RentalRecord rentalRecord) {
+        entityManager.merge(rentalRecord);
+    }
 }

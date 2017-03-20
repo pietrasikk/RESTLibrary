@@ -38,6 +38,7 @@ public class LibraryControllerTest {
     public static final String GET_ALL_USER_RENTED_BOOKS = "/getAllClientRentedBooks/";
     public static final String FIND_BOOKS = "/findBooks/";
     public static final String RESERVE_BOOKS = "/reserveBooks";
+    public static final String RENT_BOOKS = "/rentBooks";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -222,6 +223,27 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.errorMessage").value("You already have reserved or rented one of this books."))
                 .andExpect(jsonPath("$.url").value("http://localhost" + RESERVE_BOOKS))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForRentBooks.sql"})
+    public void testForRentBooks() throws Exception {
+        String userId = "1";
+        this.mockMvc.perform(post(RENT_BOOKS).param("userId",userId)).andDo(print())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.description").value("Books have been rented."))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForRentBooksWithoutReservedBooks.sql"})
+    public void testForRentBooksWithoutReservedBooks() throws Exception {
+        String userId = "1";
+        this.mockMvc.perform(post(RENT_BOOKS).param("userId",userId)).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("This user: " + userId + " does not have any reserved books."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + RENT_BOOKS))
                 .andReturn();
     }
 }

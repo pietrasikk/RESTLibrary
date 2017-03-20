@@ -41,9 +41,6 @@ public class RentalRecordServiceImplTest {
     private RentalRecordHistoryRepository rentalRecordHistoryRepository;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private BookService bookService;
 
     @Test
@@ -127,5 +124,37 @@ public class RentalRecordServiceImplTest {
         rentedBook.setUserId(1L);
 
         rentalRecordService.reserveBooks(rentedBook);
+    }
+
+    @Test
+    @Sql({"/testForRentBooks.sql"})
+    public void testForRentBooks() throws RentalRecordException {
+        long userId = 1L;
+        Assert.assertEquals(rentalRecordHistoryRepository.getRentedClientBooksList(userId).size(), 1);
+        Assert.assertEquals(rentalRecordHistoryRepository.getReservedClientBooksList(userId).size(), 1);
+
+        rentalRecordService.rentBooks(userId);
+
+        Assert.assertEquals(rentalRecordHistoryRepository.getRentedClientBooksList(userId).size(), 2);
+        Assert.assertEquals(rentalRecordHistoryRepository.getReservedClientBooksList(userId).size(), 0);
+    }
+
+    @Test
+    public void testForRentBooksWithWrongUser() throws RentalRecordException {
+        long userId = 2L;
+        thrown.expect(RentalRecordException.class);
+        thrown.expectMessage("There is no user with id: " + userId);
+
+        rentalRecordService.rentBooks(userId);
+    }
+
+    @Test
+    @Sql({"/testForRentBooksWithoutReservedBooks.sql"})
+    public void testForRentBooksWithoutReservedBooks() throws RentalRecordException {
+        long userId = 1L;
+        thrown.expect(RentalRecordException.class);
+        thrown.expectMessage("This user: " + userId + " does not have any reserved books.");
+
+        rentalRecordService.rentBooks(userId);
     }
 }

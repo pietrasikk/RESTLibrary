@@ -10,4 +10,8 @@ public interface RentalRecordRepository {
     RentalRecord addRentalRecord(RentalRecord rentalRecord);
 
     List<RentalRecord> getReservedOrRentedBooksByBookId(List<Long> books);
+
+    List<RentalRecord> getReserved(Long userId);
+
+    void update(RentalRecord rentalRecord);
 }

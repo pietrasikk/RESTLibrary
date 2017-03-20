@@ -80,5 +80,12 @@ public class LibraryController {
         SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "Books have been reserved.");
         return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/rentBooks", method = RequestMethod.POST)
+    public ResponseEntity<SuccessMessageResponse> rentBooks(@RequestParam("userId") Long userId) throws RentalRecordException {
+        rentalRecordService.rentBooks(userId);
+        SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "Books have been rented.");
+        return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
+    }
 }
 

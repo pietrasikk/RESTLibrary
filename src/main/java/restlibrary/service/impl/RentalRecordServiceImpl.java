@@ -44,6 +44,38 @@ public class RentalRecordServiceImpl implements RentalRecordService {
         logger.info("End reservation books for client with id: " + rentedBooks.getUserId());
     }
 
+    @Override
+    public void rentBooks(Long userId) throws RentalRecordException {
+        checkIfUserExists(userId);
+        logger.info("Start renting books for client with id: " + userId);
+        List<RentalRecord> reservedBooks = rentalRecordRepository.getReserved(userId);
+        checkIfUserHasReservedBooks(userId, reservedBooks);
+        updateBooksStatus(reservedBooks);
+        logger.info("End renting books for client with id: " + userId);
+    }
+
+    private void updateBooksStatus(List<RentalRecord> reservedBooks) {
+        for (RentalRecord rentalRecord : reservedBooks) {
+            rentalRecord.setRentalRecordStatus(RentalRecordStatusEnum.RENTED);
+            rentalRecordRepository.update(rentalRecord);
+        }
+    }
+
+    private void checkIfUserHasReservedBooks(Long userId, List<RentalRecord> reservedBooks) throws RentalRecordException {
+        if (reservedBooks == null || reservedBooks.isEmpty()) {
+            logger.error("This user: " + userId + " does not have any reserved books.");
+            throw new RentalRecordException("This user: " + userId + " does not have any reserved books.");
+        }
+    }
+
+    private void checkIfUserExists(Long userId) throws RentalRecordException {
+        User user = userRepository.getUserById(userId);
+        if (user == null) {
+            logger.error("There is no user with id: " + userId);
+            throw new RentalRecordException("There is no user with id: " + userId);
+        }
+    }
+
     private void prepareReservation(RentedBook rentedBooks) throws RentalRecordException {
         logger.info("Prepare Rental Records");
         User user = userRepository.getUserById(rentedBooks.getUserId());
