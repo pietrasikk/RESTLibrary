@@ -20,4 +20,6 @@ public interface BookRepository {
     Book findByISBN(String isbn);
 
     List<Book> findBooks(SearchedBook searchedBook);
+
+    List<Book> getBooksByIds(List<Long> books);
 }

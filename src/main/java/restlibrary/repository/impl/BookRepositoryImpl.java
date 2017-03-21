@@ -60,6 +60,13 @@ public class BookRepositoryImpl implements BookRepository {
                 .getResultList();
     }
 
+    @Override
+    public List<Book> getBooksByIds(List<Long> books) {
+        return entityManager.createQuery("from Book b where b.id in (:books)")
+                .setParameter("books", books)
+                .getResultList();
+    }
+
     private Book insertOrUpdate(Book book) {
         return entityManager.merge(book);
     }

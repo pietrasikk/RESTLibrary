@@ -39,6 +39,7 @@ public class LibraryControllerTest {
     public static final String FIND_BOOKS = "/findBooks/";
     public static final String RESERVE_BOOKS = "/reserveBooks";
     public static final String RENT_BOOKS = "/rentBooks";
+    public static final String RETURN_BOOKS = "/returnBooks";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -230,7 +231,7 @@ public class LibraryControllerTest {
     @Sql({"/testForRentBooks.sql"})
     public void testForRentBooks() throws Exception {
         String userId = "1";
-        this.mockMvc.perform(post(RENT_BOOKS).param("userId",userId)).andDo(print())
+        this.mockMvc.perform(post(RENT_BOOKS).param("userId", userId)).andDo(print())
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.description").value("Books have been rented."))
                 .andReturn();
@@ -240,10 +241,31 @@ public class LibraryControllerTest {
     @Sql({"/testForRentBooksWithoutReservedBooks.sql"})
     public void testForRentBooksWithoutReservedBooks() throws Exception {
         String userId = "1";
-        this.mockMvc.perform(post(RENT_BOOKS).param("userId",userId)).andDo(print())
+        this.mockMvc.perform(post(RENT_BOOKS).param("userId", userId)).andDo(print())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.errorMessage").value("This user: " + userId + " does not have any reserved books."))
                 .andExpect(jsonPath("$.url").value("http://localhost" + RENT_BOOKS))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForReturnBooks.sql"})
+    public void testForReturnBooks() throws Exception {
+        String content = "{\t\"userId\":1,\t\"booksId\":[\t1,2 ]}";
+        this.mockMvc.perform(post(RETURN_BOOKS).content(content).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.description").value("Books have been returned."))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForReturnBooksWithoutRentedThem.sql"})
+    public void testForReturnBooksWithoutRentedThem() throws Exception {
+        String content = "{\t\"userId\":1,\t\"booksId\":[\t3 ]}";
+        this.mockMvc.perform(post(RETURN_BOOKS).content(content).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("You did not rent one of this books."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + RETURN_BOOKS))
                 .andReturn();
     }
 }

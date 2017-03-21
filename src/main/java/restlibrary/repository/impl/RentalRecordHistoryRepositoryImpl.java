@@ -41,4 +41,12 @@ public class RentalRecordHistoryRepositoryImpl implements RentalRecordHistoryRep
                 .setParameter("rentalRecordStatus", RentalRecordStatusEnum.RESERVED)
                 .getResultList();
     }
+
+    @Override
+    public List<RentalRecord> getReturnedClientBooksList(Long userId) {
+        return entityManager.createQuery("from RentalRecord r where r.user.id = :userId and r.rentalRecordStatus = :rentalRecordStatus")
+                .setParameter("userId", userId)
+                .setParameter("rentalRecordStatus", RentalRecordStatusEnum.RETURNED)
+                .getResultList();
+    }
 }
