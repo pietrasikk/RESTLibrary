@@ -13,5 +13,7 @@ public interface RentalRecordRepository {
 
     List<RentalRecord> getReserved(Long userId);
 
+    List<RentalRecord> getRented(Long userId);
+
     void update(RentalRecord rentalRecord);
 }

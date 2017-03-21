@@ -157,4 +157,61 @@ public class RentalRecordServiceImplTest {
 
         rentalRecordService.rentBooks(userId);
     }
+
+    @Test
+    @Sql({"/testForReturnBooks.sql"})
+    public void testForReturneBooks() throws RentalRecordException {
+        RentedBook rentedBook = new RentedBook();
+        rentedBook.setUserId(1L);
+        ArrayList<Long> booksId = new ArrayList<>();
+        booksId.add(1L);
+        booksId.add(2L);
+        rentedBook.setBooksId(booksId);
+
+        Book book_1_Before = bookService.getBookById(1L);
+        Book book_2_Before = bookService.getBookById(2L);
+        List<RentalRecord> rentedBooksBefore = rentalRecordHistoryRepository.getRentedClientBooksList(1L);
+        List<RentalRecord> returnedClientBooksList = rentalRecordHistoryRepository.getReturnedClientBooksList(1L);
+        Assert.assertEquals(rentedBooksBefore.size(), 2);
+        Assert.assertEquals(returnedClientBooksList.size(), 0);
+        Assert.assertEquals(book_1_Before.getCopies(), 11);
+        Assert.assertEquals(book_2_Before.getCopies(), 2);
+
+        rentalRecordService.returnBooks(rentedBook);
+
+        Book book_1_After = bookService.getBookById(1L);
+        Book book_2_After = bookService.getBookById(2L);
+        List<RentalRecord> rentedBooksAfter = rentalRecordHistoryRepository.getRentedClientBooksList(1L);
+        List<RentalRecord> returnedClientBooksListAfter = rentalRecordHistoryRepository.getReturnedClientBooksList(1L);
+        Assert.assertEquals(rentedBooksAfter.size(), 0);
+        Assert.assertEquals(returnedClientBooksListAfter.size(), 2);
+        Assert.assertEquals(returnedClientBooksListAfter.get(0).getRentalRecordStatus(), RentalRecordStatusEnum.RETURNED);
+        Assert.assertEquals(book_1_After.getCopies(), 12);
+        Assert.assertEquals(book_2_After.getCopies(), 3);
+    }
+
+    @Test
+    public void testForReturnBooksWithWrongUser() throws RentalRecordException {
+        RentedBook rentedBook = new RentedBook();
+        rentedBook.setUserId(2L);
+        thrown.expect(RentalRecordException.class);
+        thrown.expectMessage("There is no user with id: " + rentedBook.getUserId());
+
+        rentalRecordService.returnBooks(rentedBook);
+    }
+
+    @Test
+    @Sql({"/testForReturnBooksWithoutRentedThem.sql"})
+    public void testForReturnBooksWithoutRentedThem() throws RentalRecordException {
+        RentedBook rentedBook = new RentedBook();
+        rentedBook.setUserId(1L);
+        ArrayList<Long> booksId = new ArrayList<>();
+        booksId.add(1L);
+        booksId.add(2L);
+        rentedBook.setBooksId(booksId);
+        thrown.expect(RentalRecordException.class);
+        thrown.expectMessage("You did not rent one of this books.");
+
+        rentalRecordService.returnBooks(rentedBook);
+    }
 }

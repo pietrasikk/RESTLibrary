@@ -17,6 +17,7 @@ import restlibrary.repository.RentalRecordRepository;
 import restlibrary.repository.UserRepository;
 import restlibrary.service.RentalRecordService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Transactional
@@ -45,6 +46,16 @@ public class RentalRecordServiceImpl implements RentalRecordService {
     }
 
     @Override
+    public void returnBooks(RentedBook rentedBooks) throws RentalRecordException {
+        checkIfUserExists(rentedBooks.getUserId());
+        logger.info("Start giving back books for client with id: " + rentedBooks.getUserId());
+        List<RentalRecord> rented = rentalRecordRepository.getRented(rentedBooks.getUserId());
+        checkIfUserRentedThisBooks(rentedBooks, rented);
+        returnBooksAndUpdateRentalRecord(rentedBooks, rented);
+        logger.info("End giving back books for client with id: " + rentedBooks.getUserId());
+    }
+
+    @Override
     public void rentBooks(Long userId) throws RentalRecordException {
         checkIfUserExists(userId);
         logger.info("Start renting books for client with id: " + userId);
@@ -54,9 +65,34 @@ public class RentalRecordServiceImpl implements RentalRecordService {
         logger.info("End renting books for client with id: " + userId);
     }
 
+    private void returnBooksAndUpdateRentalRecord(RentedBook rentedBooks, List<RentalRecord> rented) {
+        logger.info("Return books and update Rental Records");
+        List<Book> booksByIds = bookRepository.getBooksByIds(rentedBooks.getBooksId());
+        for (Book book : booksByIds) {
+            book.setCopies(book.getCopies() + 1);
+            bookRepository.updateBook(book);
+        }
+        for (RentalRecord rentalRecord : rented) {
+            rentalRecord.setReturnDate(LocalDateTime.now());
+            rentalRecord.setRentalRecordStatus(RentalRecordStatusEnum.RETURNED);
+            rentalRecordRepository.update(rentalRecord);
+        }
+        logger.info("Saved books and Rental Records into Database.");
+    }
+
+    private void checkIfUserRentedThisBooks(RentedBook rentedBooks, List<RentalRecord> rented) throws RentalRecordException {
+        logger.info("Check if user with id: " + rentedBooks.getUserId() + " rented this books.");
+        if (rented.size() != rentedBooks.getBooksId().size()) {
+            logger.error("User with id: " + rentedBooks.getUserId() + " did not rent one of this books.");
+            throw new RentalRecordException("You did not rent one of this books.");
+        }
+        logger.info("User with id: " + rentedBooks.getUserId() + " rented this books.");
+    }
+
     private void updateBooksStatus(List<RentalRecord> reservedBooks) {
         for (RentalRecord rentalRecord : reservedBooks) {
             rentalRecord.setRentalRecordStatus(RentalRecordStatusEnum.RENTED);
+            rentalRecord.setRentalDate(LocalDateTime.now());
             rentalRecordRepository.update(rentalRecord);
         }
     }
@@ -77,7 +113,7 @@ public class RentalRecordServiceImpl implements RentalRecordService {
     }
 
     private void prepareReservation(RentedBook rentedBooks) throws RentalRecordException {
-        logger.info("Prepare Rental Records");
+        logger.info("Update books and prepare Rental Records");
         User user = userRepository.getUserById(rentedBooks.getUserId());
         for (Long id : rentedBooks.getBooksId()) {
             Book book = bookRepository.getBookById(id);
@@ -92,7 +128,7 @@ public class RentalRecordServiceImpl implements RentalRecordService {
             book.setCopies(book.getCopies() - 1);
             bookRepository.updateBook(book);
         }
-        logger.info("Save Rental Records into Database.");
+        logger.info("Saved books and Rental Records into Database.");
     }
 
     private void checkIfBookCopiesIsZero(Book book) throws RentalRecordException {
@@ -117,7 +153,7 @@ public class RentalRecordServiceImpl implements RentalRecordService {
     }
 
     private void checkIfUserAlreadyHaveThisBooks(RentedBook rentedBooks) throws RentalRecordException {
-        logger.info("Check if user with id: " + rentedBooks.getUserId() + " already have on of this books.");
+        logger.info("Check if user with id: " + rentedBooks.getUserId() + " already have one of this books.");
         List<RentalRecord> reservedOrRentedBooksByBookId = rentalRecordRepository.getReservedOrRentedBooksByBookId(rentedBooks.getBooksId());
         if (reservedOrRentedBooksByBookId.size() != 0) {
             logger.error("User with id: " + rentedBooks.getUserId() + " already have this books.");

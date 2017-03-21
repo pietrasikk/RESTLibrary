@@ -87,5 +87,12 @@ public class LibraryController {
         SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "Books have been rented.");
         return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/returnBooks", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity<SuccessMessageResponse> returnBooks(@RequestBody RentedBook rentedBooks) throws RentalRecordException {
+        rentalRecordService.returnBooks(rentedBooks);
+        SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "Books have been returned.");
+        return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
+    }
 }
 

@@ -39,6 +39,14 @@ public class RentalRecordRepositoryImpl implements RentalRecordRepository {
     }
 
     @Override
+    public List<RentalRecord> getRented(Long userId) {
+        return entityManager.createQuery("from RentalRecord r where r.user.id = :userId and r.rentalRecordStatus = :rentalRecordStatus")
+                .setParameter("userId", userId)
+                .setParameter("rentalRecordStatus", RentalRecordStatusEnum.RENTED)
+                .getResultList();
+    }
+
+    @Override
     public void update(RentalRecord rentalRecord) {
         entityManager.merge(rentalRecord);
     }
