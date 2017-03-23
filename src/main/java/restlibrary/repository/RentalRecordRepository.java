@@ -16,4 +16,6 @@ public interface RentalRecordRepository {
     List<RentalRecord> getRented(Long userId);
 
     void update(RentalRecord rentalRecord);
+
+    void removeUserRentalRecord(Long userId);
 }

@@ -10,7 +10,7 @@ public interface UserService {
 
     void addNewUser(User newUser) throws UserException;
 
-    void removeUser(User user);
+    void removeUser(Long userId) throws UserException;
 
     List<User> getAllUsers();
 

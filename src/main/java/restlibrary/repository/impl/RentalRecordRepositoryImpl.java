@@ -50,4 +50,10 @@ public class RentalRecordRepositoryImpl implements RentalRecordRepository {
     public void update(RentalRecord rentalRecord) {
         entityManager.merge(rentalRecord);
     }
+
+    @Override
+    public void removeUserRentalRecord(Long userId) {
+        entityManager.createQuery("delete from RentalRecord r where r.user.id = :userId")
+        .setParameter("userId", userId).executeUpdate();
+    }
 }

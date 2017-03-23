@@ -40,6 +40,7 @@ public class LibraryControllerTest {
     public static final String RESERVE_BOOKS = "/reserveBooks";
     public static final String RENT_BOOKS = "/rentBooks";
     public static final String RETURN_BOOKS = "/returnBooks";
+    public static final String REMOVE_USER = "/removeUser";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -266,6 +267,27 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.errorMessage").value("You did not rent one of this books."))
                 .andExpect(jsonPath("$.url").value("http://localhost" + RETURN_BOOKS))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForRemoveUser.sql"})
+    public void testForRemoveUser() throws Exception {
+        String userId = "1";
+        this.mockMvc.perform(post(REMOVE_USER).param("userId", userId)).andDo(print())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.description").value("User has been removed."))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForRemoveUserWithRentedBooks.sql"})
+    public void testForRemoveUserWithRentedBooks() throws Exception {
+        String userId = "1";
+        this.mockMvc.perform(post(REMOVE_USER).param("userId", userId)).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("This user has rented books and cannot be removed."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + REMOVE_USER))
                 .andReturn();
     }
 }

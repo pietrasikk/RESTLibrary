@@ -14,4 +14,6 @@ public interface RentalRecordHistoryService {
     List<RentalRecord> getRentedBooksList();
 
     List<RentalRecord> getRentedClientBooksList(Long userId) throws RentalRecordHistoryException, UserException;
+
+    List<RentalRecord> getReturnedClientBooksList(Long userId);
 }

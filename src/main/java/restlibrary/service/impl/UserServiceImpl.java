@@ -7,11 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import restlibrary.exception.service.UserException;
+import restlibrary.model.Book;
+import restlibrary.model.RentalRecord;
 import restlibrary.model.User;
+import restlibrary.repository.BookRepository;
+import restlibrary.repository.RentalRecordRepository;
 import restlibrary.repository.UserRepository;
 import restlibrary.service.UserService;
 
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -23,6 +28,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RentalRecordRepository rentalRecordRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
     @Override
     public void addNewUser(User newUser) throws UserException {
         validateNewUser(newUser);
@@ -31,8 +42,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeUser(User user) {
-        userRepository.removeUser(user);
+    public void removeUser(Long userId) throws UserException {
+        logger.info("Remove user start....");
+        User user = userRepository.getUserById(userId);
+        if (user == null) {
+            throwException("There is no user with that id.");
+        }
+
+        List<RentalRecord> rented = rentalRecordRepository.getRented(userId);
+        if (rented.size() > 0) {
+            throwException("This user has rented books and cannot be removed.");
+        }
+
+        List<RentalRecord> reserved = rentalRecordRepository.getReserved(userId);
+        if (reserved.size() > 0) {
+            List<Long> booksId = new ArrayList<>();
+            for (RentalRecord rentalRecord : reserved) {
+                booksId.add(rentalRecord.getBook().getId());
+            }
+            List<Book> books = bookRepository.getBooksByIds(booksId);
+            for (Book book : books) {
+                book.setCopies(book.getCopies() + 1);
+                bookRepository.updateBook(book);
+            }
+        }
+
+        rentalRecordRepository.removeUserRentalRecord(userId);
+        userRepository.removeUser(userId);
+        logger.info("Remove user stop.");
     }
 
     @Override
