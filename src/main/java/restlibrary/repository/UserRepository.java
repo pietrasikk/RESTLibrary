@@ -9,7 +9,7 @@ public interface UserRepository {
 
     void addNewUser(User newUser);
 
-    void removeUser(User user);
+    void removeUser(Long userId);
 
     List<User> getAllUsers();
 

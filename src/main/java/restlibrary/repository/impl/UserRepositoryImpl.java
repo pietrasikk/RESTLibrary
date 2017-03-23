@@ -23,10 +23,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void removeUser(User user) {
-        if (entityManager.find(User.class, user.getId()) != null) {
-            entityManager.remove(user);
-        }
+    public void removeUser(Long userId) {
+        User user = entityManager.find(User.class, userId);
+        entityManager.remove(user);
     }
 
     @Override

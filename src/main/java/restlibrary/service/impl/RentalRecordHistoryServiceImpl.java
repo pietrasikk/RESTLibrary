@@ -60,4 +60,9 @@ public class RentalRecordHistoryServiceImpl implements RentalRecordHistoryServic
         logger.info("Finish getting list of reserved books by client: " + userId);
         return rentedClientBooksList;
     }
+
+    @Override
+    public List<RentalRecord> getReturnedClientBooksList(Long userId) {
+        return rentalRecordHistoryRepository.getReturnedClientBooksList(userId);
+    }
 }

@@ -94,5 +94,12 @@ public class LibraryController {
         SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "Books have been returned.");
         return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/removeUser", method = RequestMethod.POST)
+    public ResponseEntity<SuccessMessageResponse> removeUser(@RequestParam("userId") Long userId) throws UserException {
+        userService.removeUser(userId);
+        SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "User has been removed.");
+        return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
+    }
 }
 
