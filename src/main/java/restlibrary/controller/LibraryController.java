@@ -101,5 +101,12 @@ public class LibraryController {
         SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "User has been removed.");
         return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/removeBooks", method = RequestMethod.POST)
+    public ResponseEntity<SuccessMessageResponse> removeBooks(@RequestBody RemoveBook removeBooks) throws BookException {
+        bookService.removeBook(removeBooks);
+        SuccessMessageResponse successMessageResponse = new SuccessMessageResponse(HttpStatus.OK.value(), "Books have been removed.");
+        return new ResponseEntity<SuccessMessageResponse>(successMessageResponse, HttpStatus.OK);
+    }
 }
 

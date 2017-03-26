@@ -11,7 +11,7 @@ public interface BookRepository {
 
     Book getBookById(Long id);
 
-    void removeBook(Book book);
+    void removeBook(List<Long> bookIds);
 
     List<Book> getAllBooks();
 

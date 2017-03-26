@@ -2,6 +2,7 @@ package restlibrary.service;
 
 import restlibrary.exception.service.BookException;
 import restlibrary.model.Book;
+import restlibrary.model.RemoveBook;
 import restlibrary.model.SearchedBook;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface BookService {
 
     Book getBookById(Long id);
 
-    void removeBook(Book book);
+    void removeBook(RemoveBook book) throws BookException;
 
     List<Book> getAllBooks();
 

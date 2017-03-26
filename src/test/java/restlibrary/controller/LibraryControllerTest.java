@@ -41,6 +41,7 @@ public class LibraryControllerTest {
     public static final String RENT_BOOKS = "/rentBooks";
     public static final String RETURN_BOOKS = "/returnBooks";
     public static final String REMOVE_USER = "/removeUser";
+    public static final String REMOVE_BOOKS = "/removeBooks";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -288,6 +289,37 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.errorMessage").value("This user has rented books and cannot be removed."))
                 .andExpect(jsonPath("$.url").value("http://localhost" + REMOVE_USER))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForRemoveBook.sql"})
+    public void testForRemoveBook() throws Exception {
+        String content = "{\t\"booksId\":\t[\t1,2,3,4 ]}";
+        this.mockMvc.perform(post(REMOVE_BOOKS).content(content).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.description").value("Books have been removed."))
+                .andReturn();
+    }
+
+    @Test
+    @Sql({"/testForRemoveBook.sql"})
+    public void testForRemoveNonExistingBook() throws Exception {
+        String content = "{\t\"booksId\":\t[\t1,5 ]}";
+        this.mockMvc.perform(post(REMOVE_BOOKS).content(content).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("One of the books is not in database."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + REMOVE_BOOKS))
+                .andReturn();
+    }
+
+    @Test
+    public void testForRemoveBooksWithNoInput() throws Exception {
+        String content = "{}";
+        this.mockMvc.perform(post(REMOVE_BOOKS).content(content).contentType("application/json")).andDo(print())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("There are no books to remove."))
+                .andExpect(jsonPath("$.url").value("http://localhost" + REMOVE_BOOKS))
                 .andReturn();
     }
 }

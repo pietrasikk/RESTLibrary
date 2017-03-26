@@ -16,9 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import restlibrary.configuration.HibernateConfigurationTest;
 import restlibrary.exception.service.BookException;
 import restlibrary.model.Book;
+import restlibrary.model.RemoveBook;
 import restlibrary.model.SearchedBook;
 import restlibrary.model.enums.BookTypeEnum;
 import restlibrary.model.enums.GenreTypeEnum;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -298,5 +302,46 @@ public class BookServiceImplTest {
         thrown.expectMessage("Criteria for book cannot be null or empty.");
 
         bookService.findBooks(null);
+    }
+
+    @Test
+    @Sql({"/testForRemoveBook.sql"})
+    public void testForRemoveBook() throws BookException {
+        RemoveBook removeBook = new RemoveBook();
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
+        ids.add(2L);
+        ids.add(3L);
+        ids.add(4L);
+        removeBook.setBooksId(ids);
+        List<Book> allBooksBefore = bookService.getAllBooks();
+        Assert.assertEquals(allBooksBefore.size(), 4);
+        bookService.removeBook(removeBook);
+        List<Book> allBooksAfter = bookService.getAllBooks();
+        Assert.assertEquals(allBooksAfter.size(), 0);
+    }
+
+    @Test
+    @Sql({"/testForRemoveBook.sql"})
+    public void testForRemoveNonExistingBook() throws BookException {
+        thrown.expect(BookException.class);
+        thrown.expectMessage("One of the books is not in database.");
+
+        RemoveBook removeBook = new RemoveBook();
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
+        ids.add(5L);
+        removeBook.setBooksId(ids);
+        bookService.removeBook(removeBook);
+    }
+
+    public void testForRemoveBooksWithNoInput() throws BookException {
+        thrown.expect(BookException.class);
+        thrown.expectMessage("There are no books to remove.");
+
+        RemoveBook removeBook = new RemoveBook();
+        List<Long> ids = new ArrayList<>();
+        removeBook.setBooksId(ids);
+        bookService.removeBook(removeBook);
     }
 }

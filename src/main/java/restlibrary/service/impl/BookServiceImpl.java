@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import restlibrary.exception.service.BookException;
 import restlibrary.model.Book;
+import restlibrary.model.RemoveBook;
 import restlibrary.model.SearchedBook;
 import restlibrary.repository.BookRepository;
 import restlibrary.service.BookService;
@@ -34,8 +35,19 @@ public class BookServiceImpl implements BookService {
         return bookRepository.getBookById(id);
     }
 
-    public void removeBook(Book book) {
-        bookRepository.removeBook(book);
+    public void removeBook(RemoveBook books) throws BookException {
+        logger.info("Start removing books...");
+        if (books == null  || books.getBooksId() == null|| books.getBooksId().isEmpty()) {
+            logger.error("There are no books to remove.");
+            throwException("There are no books to remove.");
+        }
+        List<Book> booksByIds = bookRepository.getBooksByIds(books.getBooksId());
+        if (booksByIds.size() != books.getBooksId().size()) {
+            logger.error("One of the books is not in database: " + books.toString());
+            throwException("One of the books is not in database.");
+        }
+        bookRepository.removeBook(books.getBooksId());
+        logger.info("Stop removing books...");
     }
 
     public List<Book> getAllBooks() {

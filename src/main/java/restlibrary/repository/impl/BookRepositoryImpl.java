@@ -26,11 +26,9 @@ public class BookRepositoryImpl implements BookRepository {
         return entityManager.find(Book.class, id);
     }
 
-    public void removeBook(Book book) {
-        Book removedBook = entityManager.find(Book.class, book.getId());
-        if (removedBook != null) {
-            entityManager.remove(removedBook);
-        }
+    public void removeBook(List<Long> bookIds) {
+        entityManager.createQuery("delete from Book b where b.id in (:bookIds)")
+                .setParameter("bookIds", bookIds).executeUpdate();
     }
 
     public List<Book> getAllBooks() {
